@@ -2,9 +2,11 @@
 ## Complete 20-Day Implementation Plan
 
 **Specification:** `docs/PROJECT_SPECIFICATION.md`  
+**Plan version:** 1.1  
 **Duration:** 20 days  
 **Team:** 3 members  
-**Primary stack:** Python, pandas, NumPy, SciPy/statsmodels, scikit-learn, Plotly, Streamlit, kagglehub
+**Primary stack:** Python, pandas, NumPy, SciPy/statsmodels, scikit-learn, Plotly, Streamlit, kagglehub  
+**Dataset verification:** COMPLETE — supplied CSV verified on 2026-09-29
 
 ---
 
@@ -20,18 +22,31 @@ APP → SERVICE → ANALYTICS → DATA
 
 Analytics functions must be reusable by Streamlit, tests, notebooks, and report-generation workflows.
 
+### Non-negotiable principles
+
+1. Raw data are immutable.
+2. Dataset variants are explicit.
+3. The positive target class is described as **prediabetes or diabetes**, not confirmed diabetes.
+4. Exact duplicates are measured and documented, never silently discarded.
+5. Primary ML uses `unique_profile_v1`.
+6. The primary train/test split is stratified 80/20 with `random_state=42`.
+7. Exact duplicate feature rows must not cross the primary train/test boundary.
+8. Test data remain untouched during balancing, preprocessing fitting, threshold selection, and model fitting.
+9. Statistical results report practical context, not p-values alone.
+10. The Streamlit layer presents results; it does not invent analytical conclusions.
+
 ---
 
 ## 2. Build Sequence
 
-1. Repository setup
-2. Dataset verification
-3. Data dictionary
+1. Research design and repository alignment
+2. Dataset verification gate — **COMPLETE**
+3. Data dictionary and metadata
 4. Configuration and schemas
-5. Data layer
+5. Data layer and explicit dataset variants
 6. Descriptive statistics
 7. Probability
-8. Inferential statistics
+8. Inferential statistics and assumption checks
 9. Regression
 10. Machine learning
 11. Class imbalance
@@ -39,13 +54,11 @@ Analytics functions must be reusable by Streamlit, tests, notebooks, and report-
 13. Calibration
 14. Interpretation
 15. Service layer
-16. Streamlit UI
-17. Integration
-18. Testing
-19. Report
-20. Presentation and final audit
-
-Do not skip the dataset-verification gate.
+16. Streamlit core UI
+17. Advanced Streamlit UI
+18. Integration and QA
+19. Report and presentation
+20. Final audit and rehearsal
 
 ---
 
@@ -53,11 +66,22 @@ Do not skip the dataset-verification gate.
 
 ### All members
 
-Confirm project title, application name, research objective, research questions, hypotheses, dataset, scope, ownership, and documentation structure.
+Confirm:
+
+- project title;
+- application name;
+- research objective;
+- research questions;
+- hypotheses;
+- dataset;
+- scope;
+- ownership;
+- documentation structure;
+- terminology rules.
 
 ### Member 1
 
-Review dataset source and download process.
+Review dataset source and acquisition process.
 
 ### Member 2
 
@@ -65,7 +89,7 @@ Map every research question to a statistical method and required output.
 
 ### Member 3
 
-Map predictive research questions to models, metrics, imbalance experiments, threshold analysis, and calibration.
+Map predictive research questions to models, metrics, imbalance experiments, threshold analysis, calibration, and interpretation.
 
 ### Deliverables
 
@@ -74,19 +98,35 @@ Map predictive research questions to models, metrics, imbalance experiments, thr
 - repository structure;
 - initial GitHub issues.
 
+### Gate
+
+All members agree that `Diabetes_binary=1` means **prediabetes or diabetes** and that the project is not a clinical diagnostic system.
+
 ---
 
-## 4. Day 2 — Dataset Verification Gate
+## 4. Day 2 — Dataset Verification Gate — COMPLETE
+
+The supplied CSV has been inspected.
+
+### Verified facts
+
+- **253,680 rows**
+- **22 columns**
+- **0 missing cells**
+- **24,206 exact duplicate rows**
+- **9.5419% exact duplicate-row rate**
+- **229,474 rows after complete-row deduplication**
+- target `Diabetes_binary`
+- target counts: 218,334 zeros and 35,346 ones
+- all 22 columns are numeric in the supplied CSV.
 
 ### Member 1
 
-Download using `kagglehub` and inspect the actual CSV.
-
-Verify exact filename, dimensions, columns, target, target coding, class counts, missing values, duplicates, data types, binary values, Age, Sex, Education, Income, and unexpected values.
+Preserve the raw file unchanged and generate the initial data-quality report.
 
 ### Member 2
 
-Confirm the verified schema supports planned probability and inferential analyses.
+Confirm that the verified schema supports the planned probability and inferential analyses.
 
 ### Member 3
 
@@ -97,15 +137,16 @@ Confirm candidate ML features, target encoding, and preprocessing requirements.
 - raw dataset under `data/raw/`;
 - verification notes;
 - initial quality report;
-- `docs/DATA_DICTIONARY.md`.
+- `docs/DATA_DICTIONARY.md`;
+- dataset-version decision record.
 
 ### Gate
 
-No full analysis implementation until schema and target coding are verified.
+The verification gate is complete. Future runs must still validate the same conditions and fail fast if the downloaded file differs unexpectedly.
 
 ---
 
-## 5. Day 3 — Configuration and Package Foundation
+## 5. Day 3 — Data Dictionary, Configuration, and Package Foundation
 
 Implement:
 
@@ -116,14 +157,30 @@ Implement:
 - dataset configuration;
 - model configuration;
 - variable metadata;
+- human-readable category labels;
 - `.gitignore`;
 - requirements.
 
-Confirm the project imports cleanly from a fresh environment.
+### Required configuration
+
+```python
+PROJECT_CONFIG = {
+    "target_column": "Diabetes_binary",
+    "random_state": 42,
+    "test_size": 0.20,
+    "confidence_level": 0.95,
+    "primary_ml_dataset_variant": "unique_profile_v1",
+    "descriptive_dataset_variant": "full_clean_v1",
+}
+```
+
+### Deliverable
+
+The project imports cleanly from a fresh environment and the verified schema is represented centrally.
 
 ---
 
-## 6. Day 4 — Data Layer
+## 6. Day 4 — Data Layer and Dataset Variants
 
 Member 1 implements:
 
@@ -135,19 +192,62 @@ generate_data_quality_report()
 prepare_analysis_data()
 ```
 
-Validation must detect missing files, malformed CSVs, missing columns, unexpected target values, invalid categories, and empty datasets.
+### Required variants
 
-**Deliverable:** reproducible raw-to-analysis-ready data pipeline.
+```text
+raw_v1
+full_clean_v1
+unique_profile_v1
+balanced_train_v1
+```
+
+### Rules
+
+- `raw_v1`: exact downloaded CSV.
+- `full_clean_v1`: verified complete dataset with no silent row removal.
+- `unique_profile_v1`: complete-row duplicate removal.
+- `balanced_train_v1`: derived only from a training partition.
+
+### Validation must detect
+
+- missing files;
+- malformed CSVs;
+- missing columns;
+- unexpected target values;
+- invalid categories;
+- empty datasets;
+- unexpected schema changes;
+- duplicate-count changes.
+
+### Deliverable
+
+Reproducible raw-to-analysis-ready data pipeline.
 
 ---
 
 ## 7. Day 5 — Descriptive Statistics and EDA
 
-Implement numeric and categorical summaries, target comparisons, and prevalence tables.
+Implement numeric and categorical summaries, target comparisons, prevalence tables, and initial visualizations.
 
-Generate target distribution, demographic summaries, health/lifestyle summaries, group comparisons, and initial visualizations.
+### Required EDA
 
-**Deliverable:** baseline EDA tables and figures.
+- target distribution;
+- duplicate-rate summary;
+- demographic summaries;
+- health/lifestyle summaries;
+- socioeconomic summaries;
+- target-group comparisons;
+- selected conditional prevalence tables;
+- distributions;
+- correlation exploration.
+
+### Sensitivity requirement
+
+For important findings, compare `full_clean_v1` and `unique_profile_v1` where duplicate handling could change the interpretation.
+
+### Deliverable
+
+Baseline EDA tables and figures with dataset-variant labels.
 
 ---
 
@@ -163,37 +263,113 @@ verify_bayes_theorem()
 calculate_risk_profile_probability()
 ```
 
-Every result should expose numerator, denominator, estimate, conditions, and relevant sample size.
+Every result should expose:
 
-**Deliverable:** verified probability examples suitable for report and UI.
+- numerator;
+- denominator;
+- probability;
+- target definition;
+- conditions;
+- dataset variant;
+- sample size.
+
+### Required demonstrations
+
+At least one reproducible example each for:
+
+- marginal probability;
+- joint probability;
+- conditional probability;
+- Bayes theorem;
+- multi-feature/profile probability.
+
+### Deliverable
+
+Verified probability examples suitable for report and UI.
 
 ---
 
 ## 9. Day 7 — Confidence Intervals
 
-Implement proportion, mean, and difference-in-means confidence intervals. Test against simple known cases and edge cases.
+Implement:
 
-**Deliverable:** tested CI module.
+- proportion confidence interval;
+- mean confidence interval;
+- difference-in-means confidence interval.
+
+### Validation
+
+Test:
+
+- standard cases;
+- small samples where the chosen method remains valid;
+- zero denominators;
+- invalid confidence levels;
+- empty inputs.
+
+Document the interval method.
+
+### Deliverable
+
+Tested CI module.
 
 ---
 
-## 10. Day 8 — Hypothesis Testing
+## 10. Day 8 — Hypothesis Testing and Assumption Checks
 
-Implement chi-square, Welch t-test, ANOVA, post-hoc analysis, effect sizes, and multiple-comparison adjustment.
+Implement:
 
-Report test statistic, df where applicable, p-value, effect size, and sample size.
+- chi-square;
+- Welch t-test;
+- ANOVA;
+- post-hoc analysis;
+- effect sizes;
+- multiple-comparison adjustment.
 
-**Deliverable:** complete inferential-statistics core.
+### Required reporting
+
+- test statistic;
+- df where applicable;
+- p-value;
+- effect size;
+- sample size;
+- confidence interval where applicable;
+- assumption/diagnostic notes.
+
+### Multiple comparisons
+
+Use a documented Benjamini-Hochberg/FDR strategy for planned families of tests where appropriate.
+
+### Assumption checks
+
+Document relevant assumptions and limitations rather than mechanically applying tests without checking data characteristics.
+
+### Deliverable
+
+Complete inferential-statistics core.
 
 ---
 
 ## 11. Day 9 — Association and Statistical Integration
 
-Implement correlation and unified statistical result structures. Produce report-ready tables.
+Implement:
 
-Review whether assumptions and test choices are documented.
+- Spearman correlation;
+- unified statistical result structures;
+- report-ready tables;
+- warnings/metadata.
 
-**Deliverable:** all planned core statistical outputs can be generated outside Streamlit.
+Review:
+
+- variable treatment;
+- assumptions;
+- effect-size interpretation;
+- multiple-comparison strategy;
+- dataset-variant labeling.
+
+### Deliverable
+
+All planned core statistical outputs can be generated outside Streamlit.
 
 ---
 
@@ -207,13 +383,40 @@ extract_odds_ratios()
 compare_regression_models()
 ```
 
-Build baseline and BMI × Age interaction models. Report coefficients, odds ratios, confidence intervals, p-values, and model comparison statistics.
+Build:
 
-**Deliverable:** reproducible regression results.
+1. baseline model;
+2. BMI × Age interaction model.
+
+### Required decisions
+
+Document whether:
+
+- Age is treated as ordinal numeric or categorical;
+- Education is treated as ordinal numeric or categorical;
+- Income is treated as ordinal numeric or categorical;
+- GenHlth is treated as ordinal numeric or categorical;
+- MentHlth and PhysHlth are modeled as count-like numeric variables.
+
+### Outputs
+
+- coefficients;
+- standard errors;
+- p-values;
+- odds ratios;
+- 95% CIs;
+- sample size;
+- model-comparison statistics;
+- feature-treatment metadata;
+- dataset variant.
+
+### Deliverable
+
+Reproducible regression results.
 
 ---
 
-## 13. Day 11 — Classification Models
+## 13. Day 11 — Primary Classification Models
 
 Implement:
 
@@ -227,9 +430,24 @@ evaluate_classifier()
 compare_models()
 ```
 
-Use stratification and a fixed seed. Keep the test set untouched.
+### Primary ML protocol
 
-**Deliverable:** three baseline classifiers and common metrics.
+1. Start from `unique_profile_v1`.
+2. Create stratified 80/20 train/test split.
+3. Fix `random_state=42`.
+4. Keep test set untouched.
+5. Fit preprocessing on training data only.
+6. Verify no exact duplicate feature rows cross train/test.
+7. Train the three baseline models.
+8. Evaluate on the untouched test set.
+
+### Leakage tests
+
+Add an automated assertion that no exact duplicate feature vectors occur across train and test.
+
+### Deliverable
+
+Three baseline classifiers and common metrics with a recorded experiment configuration.
 
 ---
 
@@ -243,11 +461,23 @@ balance_training_data()
 train_class_weighted_model()
 ```
 
-Compare original, class-weighted, and balanced-training approaches.
+Compare:
 
-Only training data may be balanced.
+1. original training distribution;
+2. class-weighted model;
+3. balanced training data;
+4. threshold adjustment as a separate experiment.
 
-**Deliverable:** comparable imbalance experiment table.
+### Rules
+
+- balance training data only;
+- never rebalance the final test set;
+- preserve the natural test distribution;
+- record before/after training counts.
+
+### Deliverable
+
+Comparable imbalance experiment table.
 
 ---
 
@@ -262,17 +492,58 @@ calculate_calibration_metrics()
 generate_calibration_data()
 ```
 
-Evaluate threshold trade-offs and calibration/Brier score.
+### Thresholds
 
-**Deliverable:** threshold and calibration outputs.
+Default grid:
+
+```text
+0.10, 0.15, 0.20, ..., 0.90
+```
+
+Report:
+
+- threshold;
+- precision;
+- recall;
+- specificity;
+- F1;
+- confusion-matrix counts.
+
+### Calibration
+
+Report:
+
+- Brier score;
+- calibration curve;
+- calibration table;
+- bin size/count;
+- predicted probability;
+- observed event frequency.
+
+### Important control
+
+Do not select a final threshold using the final test set without documenting the resulting evaluation bias. If threshold selection is optimized, introduce a validation strategy or cross-validation and reserve the final test set for one-time evaluation.
+
+### Deliverable
+
+Threshold and calibration outputs.
 
 ---
 
 ## 16. Day 14 — Model Interpretation
 
-Implement permutation feature importance and odds-ratio extraction. Generate interpretation-ready tables and figures.
+Implement permutation feature importance and odds-ratio extraction.
 
-**Deliverable:** transparent model interpretation outputs.
+### Requirements
+
+- use an explicitly documented evaluation split;
+- report uncertainty/context where available;
+- avoid causal language;
+- distinguish statistical association from predictive importance.
+
+### Deliverable
+
+Transparent interpretation outputs.
 
 ---
 
@@ -291,55 +562,209 @@ get_prediction_result()
 
 The service layer orchestrates existing analytics; it must not duplicate statistical formulas.
 
-**Deliverable:** Streamlit can consume stable service contracts.
+### Service result requirements
+
+Include:
+
+- status;
+- results;
+- warnings;
+- dataset variant;
+- metadata;
+- target definition where relevant.
+
+### Deliverable
+
+Streamlit can consume stable service contracts.
 
 ---
 
 ## 18. Day 16 — Streamlit Core UI
 
-Build application shell, navigation, dashboard, Data Explorer, EDA, and shared components.
+Build:
 
-Shared components should include metric cards, result tables, confusion matrices, probability results, and statistical results.
+- application shell;
+- navigation;
+- Home / Executive Dashboard;
+- Data Explorer;
+- Exploratory Analysis;
+- shared components.
 
-**Deliverable:** core UI connected to real analytics.
+Shared components should include:
+
+- metric cards;
+- result tables;
+- probability result cards;
+- statistical result cards;
+- confusion matrices;
+- warning/limitation panels.
+
+### Data Explorer must show
+
+- row/column count;
+- missingness;
+- duplicate count/rate;
+- target distribution;
+- variable types;
+- category mappings;
+- dataset variant.
+
+### Deliverable
+
+Core UI connected to real analytics.
 
 ---
 
-## 19. Day 17 — Advanced UI
+## 19. Day 17 — Advanced Streamlit UI
 
-Build Probability Explorer, Statistical Testing Lab, Regression Lab, Machine Learning Lab, Imbalance & Threshold Lab, Calibration, Interpretation, and Prediction Explorer.
+Build:
 
-Add user-input validation and friendly error handling.
+- Probability Explorer;
+- Statistical Testing Lab;
+- Regression Lab;
+- Machine Learning Lab;
+- Imbalance & Threshold Lab;
+- Calibration;
+- Interpretation;
+- Prediction Explorer.
 
-**Deliverable:** complete research laboratory.
+### Prediction Explorer
+
+Show:
+
+- selected model;
+- model-estimated probability of the positive `Diabetes_binary` class;
+- threshold;
+- model classification;
+- model metadata;
+- methodology warning.
+
+Do not use diagnostic language.
+
+### Deliverable
+
+Complete research laboratory.
 
 ---
 
 ## 20. Day 18 — Integration and QA
 
-Merge team branches. Test all modules and pages, including invalid inputs, empty groups, missing columns, failed models, invalid thresholds, and incomplete prediction profiles.
+Merge team branches and run:
 
-Run the complete test suite.
+- unit tests;
+- integration tests;
+- complete analytics pipeline;
+- Streamlit smoke tests;
+- prediction-page validation;
+- invalid-input tests;
+- duplicate-leakage test;
+- clean-environment test.
 
-**Deliverable:** release candidate.
+### Final data audit
+
+Confirm:
+
+- raw dataset unchanged;
+- schema matches expected 22 columns;
+- target is `Diabetes_binary`;
+- target wording is correct;
+- duplicate counts are documented;
+- `unique_profile_v1` is reproducible;
+- primary ML uses `unique_profile_v1`;
+- no exact duplicate feature rows cross train/test;
+- test set is not balanced;
+- all outputs identify dataset variant.
+
+### Deliverable
+
+Release candidate.
 
 ---
 
 ## 21. Day 19 — Report and Presentation
 
-Complete methodology, results, discussion, limitations, figures, tables, references, and presentation.
+Complete:
 
-Every major reported value must be traceable to code/output.
+1. methodology;
+2. dataset verification;
+3. duplicate analysis;
+4. descriptive results;
+5. probability/Bayes results;
+6. confidence intervals;
+7. hypothesis testing;
+8. effect sizes;
+9. multiple-comparison handling;
+10. logistic regression;
+11. BMI × Age interaction;
+12. ML results;
+13. imbalance experiments;
+14. threshold analysis;
+15. calibration;
+16. model interpretation;
+17. limitations;
+18. conclusion;
+19. references.
 
-**Deliverable:** draft final report and 15–18 slide presentation.
+### Traceability rule
+
+Every major reported value must be traceable to a reproducible code output.
+
+### Presentation
+
+Target 15–18 slides covering:
+
+- problem;
+- dataset;
+- research questions;
+- statistical methodology;
+- key results;
+- ML methodology;
+- imbalance/threshold/calibration;
+- limitations;
+- application demonstration;
+- conclusions.
+
+### Deliverable
+
+Draft final report and presentation.
 
 ---
 
 ## 22. Day 20 — Final Audit and Rehearsal
 
-Perform a clean-environment install and run. Launch Streamlit, run tests, verify outputs, inspect documentation, check GitHub, and rehearse the presentation.
+Perform:
 
-No unresolved critical defects should remain.
+- clean-environment installation;
+- test-suite run;
+- Streamlit launch;
+- full pipeline execution;
+- output inspection;
+- GitHub review;
+- documentation review;
+- report-to-code traceability check;
+- presentation rehearsal.
+
+### Final audit checklist
+
+- no unresolved critical defects;
+- no personal absolute paths;
+- no secrets/API keys;
+- no raw-data mutation;
+- no unsupported clinical claims;
+- no “diagnosis” language;
+- target consistently described as prediabetes-or-diabetes outcome;
+- duplicate handling documented;
+- primary ML leakage control verified;
+- statistical methods documented;
+- effect sizes included;
+- multiple comparisons addressed;
+- test-set integrity preserved;
+- model metadata stored;
+- references formatted in APA 7.
+
+### Deliverable
+
+Final release candidate, report, presentation, and reproducibility package.
 
 ---
 
@@ -386,7 +811,24 @@ Issue → feature branch → implementation → tests → commit → pull reques
 
 Substantial changes should receive teammate review.
 
-Suggested commit prefixes: `feat:`, `fix:`, `test:`, `docs:`, `refactor:`.
+Suggested commit prefixes:
+
+```text
+feat:
+fix:
+test:
+docs:
+refactor:
+```
+
+Never commit:
+
+- `.venv/`;
+- `.DS_Store`;
+- credentials;
+- API keys;
+- personal absolute paths;
+- private/raw data that should not be distributed.
 
 ---
 
@@ -406,7 +848,9 @@ Suggested commit prefixes: `feat:`, `fix:`, `test:`, `docs:`, `refactor:`.
 - DATA-003 Data dictionary
 - DATA-004 Validation
 - DATA-005 Quality report
-- DATA-006 Preprocessing
+- DATA-006 Dataset variants
+- DATA-007 Duplicate analysis
+- DATA-008 Preprocessing
 
 ### Statistics
 
@@ -420,10 +864,12 @@ Suggested commit prefixes: `feat:`, `fix:`, `test:`, `docs:`, `refactor:`.
 - STAT-008 Post-hoc analysis
 - STAT-009 Effect sizes
 - STAT-010 Multiple comparisons
+- STAT-011 Assumption checks
+- STAT-012 Sensitivity analysis
 
 ### Modeling
 
-- ML-001 Data split
+- ML-001 Duplicate-controlled split
 - ML-002 Logistic classifier
 - ML-003 Random Forest
 - ML-004 Gradient Boosting
@@ -434,6 +880,7 @@ Suggested commit prefixes: `feat:`, `fix:`, `test:`, `docs:`, `refactor:`.
 - ML-009 Calibration
 - ML-010 Interpretation
 - ML-011 Prediction Explorer
+- ML-012 Leakage tests
 
 ### UI
 
@@ -454,9 +901,12 @@ Suggested commit prefixes: `feat:`, `fix:`, `test:`, `docs:`, `refactor:`.
 
 - QA-001 Unit tests
 - QA-002 Integration tests
-- QA-003 Clean environment test
-- QA-004 Documentation review
-- QA-005 Final reproducibility audit
+- QA-003 Dataset integrity tests
+- QA-004 Leakage tests
+- QA-005 Clean environment test
+- QA-006 Documentation review
+- QA-007 Report-to-code traceability
+- QA-008 Final reproducibility audit
 
 ---
 
@@ -471,233 +921,216 @@ A function is complete only when:
 - its return structure is documented;
 - it contains no UI-specific code;
 - it contains no personal absolute paths;
-- results are reproducible.
+- results are reproducible;
+- dataset variant is propagated where relevant.
 
 ---
 
 ## 27. UI Definition of Done
 
-A page is complete when it loads successfully, uses the service/analytics layer, validates inputs, handles expected errors cleanly, labels charts and statistics, avoids causal/diagnostic claims, and works with the verified dataset.
+A page is complete when it:
+
+- loads successfully;
+- uses the service/analytics layer;
+- validates inputs;
+- handles expected errors cleanly;
+- labels charts and statistics;
+- identifies the dataset variant;
+- avoids causal/diagnostic claims;
+- uses the correct positive-class terminology;
+- works with the verified dataset.
 
 ---
 
 ## 28. Statistical Result Definition of Done
 
-Every major result should state or expose what was analyzed, sample size, estimate, uncertainty, test statistic where applicable, p-value where applicable, effect size where applicable, and limitations.
+Every major result should state or expose:
+
+- what was analyzed;
+- dataset variant;
+- sample size;
+- estimate;
+- uncertainty;
+- test statistic where applicable;
+- p-value where applicable;
+- effect size where applicable;
+- assumptions/limitations where applicable.
 
 ---
 
 ## 29. ML Result Definition of Done
 
-Every model experiment should record model type, feature set, split, seed, training strategy, threshold, accuracy, precision, recall, specificity, F1, ROC-AUC, PR-AUC, Brier score where applicable, and confusion matrix.
+Every model experiment should record:
+
+- model type;
+- feature set;
+- dataset variant;
+- split strategy;
+- seed;
+- training strategy;
+- threshold;
+- accuracy;
+- precision;
+- recall;
+- specificity;
+- F1;
+- ROC-AUC;
+- PR-AUC;
+- Brier score where applicable;
+- confusion matrix;
+- leakage checks.
 
 ---
 
-## 30. Report-to-Code Traceability
+## 30. Dataset Decision Record
 
-| Report section | Primary module | Output |
-|---|---|---|
-| Dataset | `src/data/*` | quality tables |
-| EDA | `descriptive.py` | figures/tables |
-| Probability | `probability.py` | probability tables |
-| Confidence intervals | `confidence_intervals.py` | CI tables |
-| Hypothesis tests | `hypothesis_testing.py` | test tables |
-| Regression | `regression.py` | odds-ratio tables |
-| ML | `classification.py` | metrics |
-| Imbalance | `imbalance.py` | experiment tables |
-| Threshold | `thresholds.py` | threshold data/figures |
-| Calibration | `calibration.py` | calibration data |
-| Interpretation | `interpretation.py` | importance tables |
+### Decision 1 — Target terminology
+
+**Decision:** `Diabetes_binary=1` is documented as **prediabetes or diabetes**.
+
+**Reason:** The target definition must not be overstated as confirmed clinical diabetes.
+
+### Decision 2 — Duplicate rows
+
+**Decision:** Preserve raw data, report exact duplicates, and create `unique_profile_v1` for primary ML.
+
+**Reason:** The dataset has 24,206 exact duplicate rows and no respondent identifier. Silent removal would hide an important analytical decision; leaving identical rows across train/test could make model evaluation overly optimistic.
+
+### Decision 3 — Dataset variants
+
+**Decision:** Use explicit versioned variants rather than implicit data transformations.
+
+**Reason:** Every report result and experiment must be reproducible.
+
+### Decision 4 — Primary ML split
+
+**Decision:** Stratified 80/20 split from `unique_profile_v1`, seed 42, with test data untouched.
+
+**Reason:** Preserve class representation while reducing duplicate-row leakage.
+
+### Decision 5 — Full-data sensitivity analysis
+
+**Decision:** Retain `full_clean_v1` for descriptive/inferential analysis and optionally evaluate ML sensitivity against it.
+
+**Reason:** This preserves the supplied dataset for statistical description while making the predictive experiment more conservative.
 
 ---
 
-## 31. Output Convention
+## 31. Testing Matrix
+
+| Area | Normal | Invalid | Edge / integrity |
+|---|---|---|---|
+| Data loading | valid CSV | missing/malformed file | empty file |
+| Schema | expected 22 columns | missing column | unexpected extra/missing schema |
+| Target | 0/1 | unexpected value | single-class target |
+| Duplicates | reproducible count | invalid variant | exact duplicates across split |
+| Probability | valid event | invalid category | zero denominator |
+| CI | valid sample | invalid confidence | small/empty sample |
+| Chi-square | valid contingency table | missing feature | sparse expected counts |
+| Welch t-test | two groups | invalid group | empty/small group |
+| ANOVA | 3+ groups | invalid grouping | empty group |
+| Regression | valid features | missing feature | separation/degenerate design |
+| ML split | stratified split | invalid test size | duplicate leakage |
+| Balancing | training-only | invalid method | single-class input |
+| Threshold | 0–1 | outside range | threshold at 0 or 1 |
+| Calibration | valid probabilities | invalid probability | empty/single-class test |
+| Prediction | complete profile | missing feature | boundary category |
+| UI | valid inputs | invalid inputs | failed model / empty result |
+
+---
+
+## 32. Required Final Artifacts
+
+By the end of Day 20:
 
 ```text
+docs/
+├── PROJECT_SPECIFICATION.md
+├── IMPLEMENTATION_PLAN.md
+├── DATA_DICTIONARY.md
+├── references.md
+└── report_template.md
+
+src/
+├── common/
+├── data/
+├── statistics/
+├── modeling/
+└── analysis/
+
+app/
+├── app.py
+├── pages/
+└── components/
+
+tests/
+
+data/
+├── raw/
+└── processed/
+
 outputs/
 ├── figures/
-│   ├── target_distribution.*
-│   ├── bmi_by_diabetes.*
-│   ├── correlation_matrix.*
-│   ├── roc_curve.*
-│   ├── precision_recall_curve.*
-│   ├── threshold_curve.*
-│   └── calibration_curve.*
 ├── tables/
-│   ├── descriptive_statistics.*
-│   ├── prevalence.*
-│   ├── probability_results.*
-│   ├── hypothesis_tests.*
-│   ├── regression_odds_ratios.*
-│   ├── model_comparison.*
-│   └── calibration_metrics.*
 └── models/
-    ├── model.pkl
-    ├── metadata.json
-    └── metrics.json
+
+README.md
+requirements.txt
 ```
 
----
+The repository must make it possible for a teammate or evaluator to understand:
 
-## 32. Testing Matrix
-
-| Module | Normal case | Invalid case | Edge case |
-|---|---|---|---|
-| Loader | valid CSV | missing file | empty CSV |
-| Validation | valid schema | missing column | unexpected value |
-| Probability | valid event | missing condition | zero denominator |
-| CI | valid sample | invalid confidence | tiny/degenerate sample |
-| Chi-square | valid groups | missing feature | empty category |
-| t-test | two groups | invalid group | tiny group |
-| ANOVA | 3+ groups | invalid grouping | empty group |
-| Regression | valid features | missing feature | constant predictor |
-| Classification | valid split | invalid target | single class |
-| Threshold | valid 0–1 | >1 or <0 | duplicate thresholds |
-| Calibration | valid probabilities | invalid probability | sparse bin |
-| Prediction | complete profile | missing input | invalid category |
+1. exactly which dataset was analyzed;
+2. what the target means;
+3. how duplicates were handled;
+4. how the train/test split was created;
+5. how statistics were computed;
+6. how models were trained;
+7. how performance was evaluated;
+8. how results map to the final report.
 
 ---
 
-## 33. Integration Checklist
+## 33. Final Success Criteria
 
-- [ ] Dataset path configurable
-- [ ] Kaggle dataset ID documented
-- [ ] No personal absolute paths
-- [ ] No credentials/API keys committed
-- [ ] Raw dataset preserved
-- [ ] Target verified as `Diabetes_binary`
-- [ ] Data dictionary matches actual file
-- [ ] Metadata matches verified coding
-- [ ] Analytics independent of Streamlit
-- [ ] UI uses service layer
-- [ ] Tests pass
-- [ ] Streamlit starts
-- [ ] All pages render
-- [ ] Model artifacts load
-- [ ] Report values match outputs
-- [ ] Presentation matches final results
-
----
-
-## 34. Clean-Environment Test
-
-Create a fresh virtual environment and install from `requirements.txt`.
-
-Typical macOS/Linux commands:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-streamlit run app/app.py
-```
-
-Run the complete test suite as well.
-
----
-
-## 35. Reproducibility Audit
-
-A teammate who did not implement a component should attempt to reproduce the main results using only the repository, documented dependencies, dataset acquisition instructions, and project documentation.
-
-Record any undocumented manual steps and eliminate them before final submission.
-
----
-
-## 36. Final Review Questions
-
-### Research
-
-- Do research questions map to analyses?
-- Are H0/H1 explicit?
-- Are conclusions supported by results?
-
-### Statistics
-
-- Are assumptions considered?
-- Are effect sizes reported?
-- Are confidence intervals reported?
-- Are multiple comparisons addressed where appropriate?
-
-### ML
-
-- Was test leakage avoided?
-- Was the test set kept unchanged?
-- Was balancing restricted to training data?
-- Are multiple metrics reported?
-- Is calibration evaluated?
-
-### Software
-
-- Is the architecture modular?
-- Are UI and analytics separated?
-- Are expected errors handled cleanly?
-- Are core functions tested?
-
-### Reproducibility
-
-- Can another teammate run the project?
-- Is the dataset source documented?
-- Are seeds and model parameters documented?
-- Are experiments reproducible?
-
-### Responsible use
-
-- Are causal claims avoided?
-- Are diagnosis claims avoided?
-- Are limitations visible?
-- Is model output clearly educational/research-oriented?
-
----
-
-## 37. Priority if Time Is Lost
-
-### Priority 1 — Must have
-
-Dataset verification, data quality, descriptive statistics, probability, confidence intervals, hypothesis testing, logistic regression, three baseline ML models, core metrics, core Streamlit pages, report.
-
-### Priority 2 — Strongly recommended
-
-Class imbalance, threshold analysis, calibration, permutation importance, BMI × Age interaction.
-
-### Priority 3 — Optional
-
-Additional models, extensive hyperparameter search, advanced experiment tracking, additional UI polish.
-
-Do not sacrifice reproducibility, testing, or core statistics for optional features.
-
----
-
-## 38. Final System Flow
+The project succeeds when the team can demonstrate a complete, reproducible chain:
 
 ```text
-Research Question
-       ↓
-Dataset Acquisition
-       ↓
-Data Quality & Validation
-       ↓
-Descriptive Analysis
-       ↓
-Probability
-       ↓
-Inferential Statistics
-       ↓
-Association / Regression
-       ↓
-Prediction
-       ↓
-Class Imbalance
-       ↓
-Threshold Analysis
-       ↓
-Calibration
-       ↓
-Interpretation
-       ↓
-Streamlit Research Lab
-       ↓
-Report + Presentation
+RAW DATA
+   ↓
+VERIFICATION
+   ↓
+EXPLICIT DATASET VARIANTS
+   ↓
+EDA + DATA QUALITY
+   ↓
+PROBABILITY
+   ↓
+CONFIDENCE INTERVALS
+   ↓
+HYPOTHESIS TESTING
+   ↓
+EFFECT SIZES
+   ↓
+LOGISTIC REGRESSION
+   ↓
+BMI × AGE INTERACTION
+   ↓
+DUPLICATE-CONTROLLED ML
+   ↓
+CLASS-IMBALANCE EXPERIMENTS
+   ↓
+THRESHOLD ANALYSIS
+   ↓
+CALIBRATION
+   ↓
+MODEL INTERPRETATION
+   ↓
+STREAMLIT RESEARCH LAB
+   ↓
+REPORT + PRESENTATION
+   ↓
+REPRODUCIBLE GITHUB REPOSITORY
 ```
 
-The final deliverable should demonstrate both statistical/research competence and AI/software-engineering competence.
+The application and report must remain aligned: **analytics functions return facts, service functions orchestrate them, and the UI presents them without inventing conclusions.**
