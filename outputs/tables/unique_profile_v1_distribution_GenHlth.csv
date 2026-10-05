@@ -1,0 +1,6 @@
+category,count,label,percentage,dataset_variant
+1,34854,Excellent,15.188648822960335,unique_profile_v1
+2,77365,Very good,33.71405910909297,unique_profile_v1
+3,73632,Good,32.087295292712895,unique_profile_v1
+4,31545,Fair,13.746655394510926,unique_profile_v1
+5,12078,Poor,5.263341380722871,unique_profile_v1

@@ -1,0 +1,5 @@
+Diabetes_binary,category,count,label,percentage,dataset_variant
+0,0,38535,No,19.824876399985595,unique_profile_v1
+0,1,155842,Yes,80.1751236000144,unique_profile_v1
+1,0,8602,No,24.50921731202097,unique_profile_v1
+1,1,26495,Yes,75.49078268797903,unique_profile_v1
