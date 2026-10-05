@@ -7,3 +7,6 @@ streamlit
 plotly
 openpyxl
 pytest
+matplotlib
+ucimlrepo
+kagglehub
