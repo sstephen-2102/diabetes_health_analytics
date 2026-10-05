@@ -1,0 +1,6 @@
+category,label,total_observations,target_count,target_percentage,dataset_variant
+1,Excellent,45299,1140,2.5166118457361093,full_clean_v1
+2,Very good,89084,6381,7.162902429167977,full_clean_v1
+3,Good,75646,13457,17.78944028765566,full_clean_v1
+4,Fair,31570,9790,31.010452961672474,full_clean_v1
+5,Poor,12081,4578,37.89421405512789,full_clean_v1

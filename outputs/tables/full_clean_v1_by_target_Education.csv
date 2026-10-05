@@ -1,0 +1,13 @@
+Diabetes_binary,category,count,label,percentage,dataset_variant
+0,1,127,No schooling / kindergarten only,0.058167761319812765,full_clean_v1
+0,2,2860,Grades 1–8,1.3099196643674371,full_clean_v1
+0,3,7182,Grades 9–11,3.289455604715711,full_clean_v1
+0,4,51684,Grade 12 / GED,23.671988787820496,full_clean_v1
+0,5,59556,Some college / technical school,27.277473961911568,full_clean_v1
+0,6,96925,College graduate / 4+ years,44.39299421986498,full_clean_v1
+1,1,47,No schooling / kindergarten only,0.1329711990041306,full_clean_v1
+1,2,1183,Grades 1–8,3.3469133706784358,full_clean_v1
+1,3,2296,Grades 9–11,6.495784530074124,full_clean_v1
+1,4,11066,Grade 12 / GED,31.307644429355513,full_clean_v1
+1,5,10354,Some college / technical school,29.29327222316528,full_clean_v1
+1,6,10400,College graduate / 4+ years,29.423414247722512,full_clean_v1
