@@ -1,0 +1,7 @@
+category,count,label,percentage,dataset_variant
+1,174,No schooling / kindergarten only,0.06859035004730368,full_clean_v1
+2,4043,Grades 1–8,1.5937401450646482,full_clean_v1
+3,9478,Grades 9–11,3.736203090507726,full_clean_v1
+4,62750,Grade 12 / GED,24.735887732576476,full_clean_v1
+5,69910,Some college / technical school,27.558341217281612,full_clean_v1
+6,107325,College graduate / 4+ years,42.30723746452224,full_clean_v1

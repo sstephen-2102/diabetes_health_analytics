@@ -1,0 +1,187 @@
+{
+  "rows": 229474,
+  "columns": 22,
+  "missing_cells": 0,
+  "duplicate_rows": 0,
+  "duplicate_rate_percent": 0.0,
+  "rows_in_repeated_patterns": 0,
+  "distinct_patterns": 229474,
+  "column_summary": {
+    "HighBP": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "HighChol": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "CholCheck": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "BMI": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 84,
+      "analytical_type": "continuous"
+    },
+    "Smoker": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "Stroke": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "HeartDiseaseorAttack": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "PhysActivity": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "Fruits": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "Veggies": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "HvyAlcoholConsump": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "AnyHealthcare": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "NoDocbcCost": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "GenHlth": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 5,
+      "analytical_type": "ordinal"
+    },
+    "MentHlth": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 31,
+      "analytical_type": "discrete_numeric"
+    },
+    "PhysHlth": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 31,
+      "analytical_type": "discrete_numeric"
+    },
+    "DiffWalk": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "Sex": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    },
+    "Age": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 13,
+      "analytical_type": "ordinal"
+    },
+    "Education": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 6,
+      "analytical_type": "ordinal"
+    },
+    "Income": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 8,
+      "analytical_type": "ordinal"
+    },
+    "Diabetes_binary": {
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_values": 2,
+      "analytical_type": "binary"
+    }
+  },
+  "constant_columns": [],
+  "potential_outliers": {
+    "BMI": {
+      "q1": 24.0,
+      "q3": 32.0,
+      "iqr": 8.0,
+      "lower_boundary": 12.0,
+      "upper_boundary": 44.0,
+      "below_count": 0,
+      "above_count": 5638,
+      "flagged_count": 5638,
+      "flagged_percent": 2.456923224417581,
+      "decision": "Retained; flags do not establish errors."
+    }
+  },
+  "target_column": "Diabetes_binary",
+  "target_distribution": {
+    "0": 194377,
+    "1": 35097
+  },
+  "target_definition": "0 = neither prediabetes nor diabetes; 1 = prediabetes or diabetes (project-defined outcome)",
+  "dataset_variant": "unique_profile_v1"
+}

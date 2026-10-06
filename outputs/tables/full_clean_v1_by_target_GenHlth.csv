@@ -1,0 +1,11 @@
+Diabetes_binary,category,count,label,percentage,dataset_variant
+0,1,44159,Excellent,20.225434426154422,full_clean_v1
+0,2,82703,Very good,37.879120979783266,full_clean_v1
+0,3,62189,Good,28.483424478093195,full_clean_v1
+0,4,21780,Fair,9.97554205941356,full_clean_v1
+0,5,7503,Poor,3.4364780565555524,full_clean_v1
+1,1,1140,Excellent,3.225258869461891,full_clean_v1
+1,2,6381,Very good,18.0529621456459,full_clean_v1
+1,3,13457,Good,38.072200531884796,full_clean_v1
+1,4,9790,Fair,27.69761783511571,full_clean_v1
+1,5,4578,Poor,12.9519606178917,full_clean_v1

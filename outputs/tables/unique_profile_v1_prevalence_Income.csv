@@ -1,0 +1,9 @@
+category,label,total_observations,target_count,target_percentage,dataset_variant
+1,"Under USD 10,000",9791,2383,24.338678378102337,unique_profile_v1
+2,"USD 10,000–<15,000",11756,3086,26.2504253147329,unique_profile_v1
+3,"USD 15,000–<20,000",15920,3564,22.386934673366834,unique_profile_v1
+4,"USD 20,000–<25,000",19953,4047,20.28266426101338,unique_profile_v1
+5,"USD 25,000–<35,000",25326,4489,17.724867724867725,unique_profile_v1
+6,"USD 35,000–<50,000",34957,5260,15.047057813885631,unique_profile_v1
+7,"USD 50,000–<75,000",40131,5226,13.022351797862003,unique_profile_v1
+8,"USD 75,000+",71640,7042,9.829704075935233,unique_profile_v1

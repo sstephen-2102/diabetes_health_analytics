@@ -1,0 +1,6 @@
+category,label,total_observations,target_count,target_percentage,dataset_variant
+1,Excellent,34854,1135,3.256441154530326,unique_profile_v1
+2,Very good,77365,6280,8.11736573385898,unique_profile_v1
+3,Good,73632,13324,18.095393307257716,unique_profile_v1
+4,Fair,31545,9781,31.00649865271834,unique_profile_v1
+5,Poor,12078,4577,37.895346911740354,unique_profile_v1

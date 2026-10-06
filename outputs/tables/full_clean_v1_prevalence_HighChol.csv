@@ -1,0 +1,3 @@
+category,label,total_observations,target_count,target_percentage,dataset_variant
+0,No,146089,11660,7.981435973961079,full_clean_v1
+1,Yes,107591,23686,22.014852543428354,full_clean_v1

@@ -1,0 +1,195 @@
+{
+  "is_valid": true,
+  "errors": [],
+  "warnings": [
+    "Dataset differs from full-data reference; inspect provenance or variant."
+  ],
+  "variables": {
+    "HighBP": {
+      "column": "HighBP",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "HighChol": {
+      "column": "HighChol",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "CholCheck": {
+      "column": "CholCheck",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "BMI": {
+      "column": "BMI",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Smoker": {
+      "column": "Smoker",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Stroke": {
+      "column": "Stroke",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "HeartDiseaseorAttack": {
+      "column": "HeartDiseaseorAttack",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "PhysActivity": {
+      "column": "PhysActivity",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Fruits": {
+      "column": "Fruits",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Veggies": {
+      "column": "Veggies",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "HvyAlcoholConsump": {
+      "column": "HvyAlcoholConsump",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "AnyHealthcare": {
+      "column": "AnyHealthcare",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "NoDocbcCost": {
+      "column": "NoDocbcCost",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "GenHlth": {
+      "column": "GenHlth",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "MentHlth": {
+      "column": "MentHlth",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "PhysHlth": {
+      "column": "PhysHlth",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "DiffWalk": {
+      "column": "DiffWalk",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Sex": {
+      "column": "Sex",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Age": {
+      "column": "Age",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Education": {
+      "column": "Education",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Income": {
+      "column": "Income",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    },
+    "Diabetes_binary": {
+      "column": "Diabetes_binary",
+      "is_valid": true,
+      "errors": [],
+      "missing_count": 0,
+      "invalid_count": 0,
+      "dtype": "int64"
+    }
+  },
+  "duplicate_rows": 0,
+  "dataset_variant": "unique_profile_v1",
+  "reference_checks": {
+    "rows": false,
+    "columns": true,
+    "missing_cells": true,
+    "duplicate_rows": false,
+    "target_counts": false
+  },
+  "matches_reference": false
+}

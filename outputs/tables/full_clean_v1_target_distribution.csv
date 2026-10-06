@@ -1,0 +1,3 @@
+category,count,label,percentage,dataset_variant
+0,218334,Neither prediabetes nor diabetes,86.06669820245979,full_clean_v1
+1,35346,Prediabetes or diabetes,13.933301797540206,full_clean_v1

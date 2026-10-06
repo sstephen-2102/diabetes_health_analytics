@@ -1,0 +1,7 @@
+category,label,total_observations,target_count,target_percentage,dataset_variant
+1,No schooling / kindergarten only,174,47,27.011494252873565,unique_profile_v1
+2,Grades 1–8,4040,1183,29.28217821782178,unique_profile_v1
+3,Grades 9–11,9467,2296,24.252667159607057,unique_profile_v1
+4,Grade 12 / GED,61124,11032,18.048557031607878,unique_profile_v1
+5,Some college / technical school,66444,10311,15.518331226295828,unique_profile_v1
+6,College graduate / 4+ years,88225,10228,11.593085860017002,unique_profile_v1
