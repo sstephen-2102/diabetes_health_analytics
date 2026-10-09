@@ -4,8 +4,9 @@ Report outline for spec section 26 items 10–16 and the modeling limitations in
 section 27. Every number comes from `outputs/` and can be regenerated with:
 
 ```text
-python -m src.analysis.export_regression
-python -m src.analysis.export_modeling
+python -m src.analysis.export_regression --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_modeling --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_duplicate_sensitivity --csv data/raw/cdc_diabetes.csv
 ```
 
 Target code 1 is **prediabetes or diabetes** (project-defined outcome). All results
@@ -170,6 +171,85 @@ Test set, threshold 0.5:
 - One split only, so there are no confidence intervals on the metrics. AUC
   differences of about 0.01 may not be meaningful.
 - No hyperparameter tuning and no validation set.
+
+## 12a. Duplicate-handling sensitivity (RQ13, H11)
+
+Report this in section 4 (data quality and duplicates) or right after section 12.
+
+**Design.** The three baselines are trained under four scenarios: two dataset
+variants, each with two split types. Seed 42, 80/20 stratified, threshold 0.5,
+and the same models as section 12.
+
+- **Grouped split:** identical feature vectors stay on one side of the split.
+- **Random split:** identical feature vectors can land in both train and test.
+
+Comparing grouped with random on the same data isolates leakage. Comparing
+`full_clean_v1` with `unique_profile_v1` under grouped splits isolates
+deduplication.
+
+**Use.** `outputs/tables/duplicate_sensitivity.csv` and
+`outputs/duplicate_sensitivity_manifest.json`
+
+**Duplicate structure** (from the data):
+
+- `unique_profile_v1`: 1,566 feature vectors appear exactly twice, always once
+  with each label, because complete-row deduplication removed same-label copies.
+- `full_clean_v1`: 12,228 feature vectors repeat, covering 38,000 rows with up to
+  59 copies of one profile. 94.9% of these rows are negative, so they are common
+  low-risk profiles.
+
+| Scenario | Variant | Split | Train | Test | Test prevalence | Test rows seen in training |
+|---|---|---|---|---|---|---|
+| Primary | `unique_profile_v1` | grouped | 183,579 | 45,895 | 15.3% | 0 |
+| | `unique_profile_v1` | random | 183,579 | 45,895 | 15.3% | 502 (1.1%) |
+| | `full_clean_v1` | grouped | 202,943 | 50,737 | 13.9% | 0 |
+| | `full_clean_v1` | random | 202,944 | 50,736 | 13.9% | 6,836 (13.5%) |
+
+ROC AUC / PR AUC / Brier on all test rows:
+
+| Model | Unique, grouped (primary) | Unique, random | Full, grouped | Full, random |
+|---|---|---|---|---|
+| Logistic regression | 0.810 / 0.414 / 0.107 | 0.810 / 0.414 / 0.107 | 0.822 / 0.406 / 0.099 | 0.819 / 0.394 / 0.100 |
+| Random forest | 0.790 / 0.396 / 0.110 | 0.778 / 0.358 / 0.114 | 0.804 / 0.389 / 0.101 | 0.796 / 0.369 / 0.104 |
+| Gradient boosting | 0.819 / 0.441 / 0.105 | 0.819 / 0.446 / 0.105 | 0.831 / 0.434 / 0.096 | 0.826 / 0.421 / 0.098 |
+
+**Points to make.**
+
+- **Answer to H11:** duplicate handling does change evaluation results, mainly
+  through which rows end up in the test set rather than through leakage.
+- **Keeping duplicates flatters ranking and calibration scores.** Compare full
+  with unique, both grouped:
+  - ROC AUC rises by 0.012–0.014 for every model and Brier falls by about 0.009;
+  - PR AUC falls by 0.007–0.009.
+
+  The extra rows are mostly easy negatives, which also lower test prevalence
+  (13.9% vs 15.3%). Neither change means a better model.
+- **Letting identical vectors cross the split did not inflate the metrics here.**
+  Comparing random with grouped on the same data, ROC AUC changed by −0.011 to
+  +0.001.
+  - The random forest lost the most (unique: 0.790 to 0.778).
+  - In `unique_profile_v1` every crossing vector has the opposite label in
+    training, so a model that memorizes it is wrong. The random forest scores
+    ROC AUC 0.00 on those 502 rows; logistic regression and gradient boosting are
+    near chance (0.53).
+  - In `full_clean_v1` the crossing rows are mostly low-risk profiles (5.3%
+    positive), which are easy to rank either way.
+- **The grouped split remains the right design.** It is the only one in which
+  the test set measures performance on profiles the model has never seen. The
+  risk did not show up as optimism in this dataset, but a grouped split removes
+  the question entirely.
+
+**Pitfalls.**
+
+- One seed and one split per scenario, so there are no confidence intervals. The
+  split-type differences for logistic regression and gradient boosting (≤0.005
+  AUC) are within sampling noise. The full-vs-unique difference is consistent
+  across all three models.
+- Seen and unseen test subsets differ in composition (5.3% vs 15.3% positive in
+  the full random split), so comparing their metrics does not measure "leakage
+  gain".
+- This is a sensitivity analysis. The primary results in sections 12–16 use only
+  the grouped `unique_profile_v1` scenario.
 
 ## 13. Class-imbalance experiments (logistic regression)
 

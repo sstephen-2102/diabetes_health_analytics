@@ -31,8 +31,9 @@ Outputs identify `full_clean_v1` and `unique_profile_v1`. Read
 ## Member 3 modeling
 
 ```text
-python -m src.analysis.export_regression
-python -m src.analysis.export_modeling
+python -m src.analysis.export_regression --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_modeling --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_duplicate_sensitivity --csv data/raw/cdc_diabetes.csv
 streamlit run streamlit_app.py
 ```
 

@@ -106,9 +106,9 @@ reference checks), `outputs/tables/full_clean_v1_validation.json`,
 - Dataset-variant policy: `full_clean_v1` for statistics and regression;
   `unique_profile_v1` for ML, with a grouped split and 0 shared profiles.
 
-**Open item:** H11 asks whether duplicate handling changes model evaluation. The
-optional full-data ML comparison (spec section 7, item 6) has not been run. Either
-run it or state in sections 4 and 17 that only split integrity was tested.
+- Duplicate-handling sensitivity (H11): four scenarios, two dataset variants by
+  two split types. Outline and numbers are in `docs/MODELING_REPORT.md` section
+  12a; data in `outputs/tables/duplicate_sensitivity.csv`.
 
 *Write:*
 
@@ -289,8 +289,9 @@ Paste the list from `docs/references.md`, keeping only entries cited in the text
 ```text
 python -m pip install -r requirements.txt
 python -m src.analysis.export_eda --csv data/raw/cdc_diabetes.csv
-python -m src.analysis.export_regression
-python -m src.analysis.export_modeling
+python -m src.analysis.export_regression --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_modeling --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_duplicate_sensitivity --csv data/raw/cdc_diabetes.csv
 python -m pytest tests/ -q
 streamlit run streamlit_app.py
 ```

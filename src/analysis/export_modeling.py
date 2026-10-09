@@ -26,8 +26,6 @@ from src.modeling.thresholds import evaluate_thresholds
 from src.analysis.model_figures import (calibration_figure, importance_figure, precision_recall_figure,
                                         roc_figure, threshold_figure)
 from src.analysis.visualization import prepare_precision_recall_data, prepare_roc_curve_data
-from src.common.config import (ANALYSIS_CONFIG, EXPECTED_COLUMNS, FEATURE_COLUMNS, MODEL_CONFIG,
-                               PROJECT_CONFIG, TARGET_DEFINITION, VARIABLE_METADATA)
 
 TARGET = PROJECT_CONFIG["target_column"]
 SEED = PROJECT_CONFIG["random_state"]
@@ -52,12 +50,6 @@ def _write_json(path, payload):
 def _class_counts(y):
     counts = inspect_class_distribution(y)["counts"]
     return {"negatives": int(counts.get(0,0)), "positives": int(counts.get(1,0))}
-
-def _default_profile(X_train):
-    """Typical training-set value per feature, used for Prediction Explorer inputs the user leaves out."""
-    return {column: int(X_train[column].mode().iloc[0]) if VARIABLE_METADATA[column]["allowed_values"]
-            else float(X_train[column].median())
-            for column in FEATURE_COLUMNS}
 
 def _default_profile(X_train):
     """Typical training-set value per feature, used for Prediction Explorer inputs the user leaves out."""
@@ -184,7 +176,6 @@ def export_modeling(csv_path: str, output_directory: str = "outputs", check_refe
         "features": FEATURE_COLUMNS,
         "random_state": SEED,
         "split": split["metadata"],
-        "default_profile": _default_profile(X_train),
         "default_profile": _default_profile(X_train),
         "preprocessing": "complete-row deduplication; StandardScaler inside each Pipeline",
         "threshold": THRESHOLD,
