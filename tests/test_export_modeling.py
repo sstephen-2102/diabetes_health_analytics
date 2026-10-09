@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.analysis.export_modeling import THRESHOLD_GRID, export_modeling
+from src.analysis.export_modeling import THRESHOLD_GRID, export_modeling, save_baseline_models
 from src.common.config import FEATURE_COLUMNS, VARIABLE_METADATA
 from src.common.exceptions import DataValidationError
 
@@ -199,6 +199,17 @@ def test_saved_model_reloads_and_predicts(exported, model):
 
     assert probabilities.shape == (20,)
     assert ((probabilities >= 0) & (probabilities <= 1)).all()
+
+
+def test_save_baseline_models_matches_exported_models(exported, tmp_path):
+    paths = save_baseline_models(str(exported["csv"]), str(tmp_path), check_reference=False)
+    X = pd.read_csv(exported["csv"])[FEATURE_COLUMNS]
+
+    assert sorted(p.rsplit("/", 1)[-1] for p in paths) == sorted(f"{m}.pkl" for m in MODELS)
+    for model in MODELS:
+        retrained = joblib.load(tmp_path / f"{model}.pkl").predict_proba(X)
+        exported_model = joblib.load(exported["output"] / "models" / f"{model}.pkl").predict_proba(X)
+        np.testing.assert_array_equal(retrained, exported_model)
 
 
 def test_export_is_reproducible(exported, tmp_path):

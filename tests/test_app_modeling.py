@@ -115,6 +115,44 @@ def test_loaders_explain_missing_exports(tmp_path, loader, command):
         loader(str(tmp_path))
 
 
+@pytest.fixture
+def models_without_pkl(outputs, tmp_path):
+    folder = tmp_path / "models"
+    shutil.copytree(outputs / "models", folder)
+    for pkl in folder.glob("*.pkl"):
+        pkl.unlink()
+    return folder
+
+
+def test_ensure_model_files_does_nothing_when_models_exist(outputs, monkeypatch):
+    monkeypatch.setattr("src.data.loader.download_uci_dataset", lambda path: pytest.fail("should not download"))
+
+    assert services.ensure_model_files(str(outputs / "models"), "unused.csv") is False
+
+
+def test_ensure_model_files_does_nothing_without_metadata(tmp_path):
+    assert services.ensure_model_files(str(tmp_path), "unused.csv") is False
+
+
+def test_ensure_model_files_retrains_missing_models(models_without_pkl, monkeypatch, tmp_path):
+    calls = []
+    monkeypatch.setattr("src.data.loader.download_uci_dataset", lambda path: calls.append(path) or path)
+    monkeypatch.setattr("src.analysis.export_modeling.save_baseline_models",
+                        lambda csv, folder: calls.append((csv, folder)))
+
+    assert services.ensure_model_files(str(models_without_pkl), str(tmp_path / "raw.csv")) is True
+    assert calls == [str(tmp_path / "raw.csv"), (str(tmp_path / "raw.csv"), str(models_without_pkl))]
+
+
+def test_ensure_model_files_explains_failed_retraining(models_without_pkl, monkeypatch, tmp_path):
+    def offline(path):
+        raise DataLoadError("UCI acquisition failed: offline")
+    monkeypatch.setattr("src.data.loader.download_uci_dataset", offline)
+
+    with pytest.raises(DataLoadError, match="retraining failed.*export_modeling --csv"):
+        services.ensure_model_files(str(models_without_pkl), str(tmp_path / "raw.csv"))
+
+
 def test_load_modeling_outputs_missing_table(outputs, tmp_path):
     copy = tmp_path / "outputs"
     shutil.copytree(outputs, copy)

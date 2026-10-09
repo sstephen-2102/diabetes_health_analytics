@@ -6,11 +6,14 @@ import streamlit as st
 from app import services
 
 OUTPUTS = Path(__file__).resolve().parents[1] / "outputs"
+RAW_CSV = Path(__file__).resolve().parents[1] / "data" / "raw" / "cdc_diabetes.csv"
 
 
-@st.cache_resource(show_spinner="Loading saved models...")
+@st.cache_resource(show_spinner="Loading saved models (the first launch after a fresh clone retrains them, "
+                                "which takes a few minutes)...")
 def model_artifacts() -> dict:
     """Fitted pipelines are shared, not copied: pages must not modify them."""
+    services.ensure_model_files(str(OUTPUTS / "models"), str(RAW_CSV))
     return services.load_model_artifacts(str(OUTPUTS / "models"))
 
 

@@ -57,10 +57,8 @@ def _default_profile(X_train):
             else float(X_train[column].median())
             for column in FEATURE_COLUMNS}
 
-def export_modeling(csv_path: str, output_directory: str = "outputs", check_reference: bool = True,
-                    importance_sample: int = 10_000) -> dict:
-    """Export modeling artifacts for a CSV dataset."""
-    # Load, validate, and build the primary ML dataset
+def _primary_split(csv_path: str, check_reference: bool) -> tuple[pd.DataFrame, dict]:
+    """Load and validate the CSV, build the primary ML dataset and split it."""
     raw = load_dataset(csv_path)
     validation = validate_dataset(raw, EXPECTED_COLUMNS, TARGET)
     if not validation["is_valid"]:
@@ -68,6 +66,28 @@ def export_modeling(csv_path: str, output_directory: str = "outputs", check_refe
     if check_reference and not validation["matches_reference"]:
         raise DataValidationError("Dataset does not match reference dataset.")
     data = prepare_analysis_data(raw, TARGET, FEATURE_COLUMNS, dataset_variant=VARIANT)
+    return data, split_data(data, TARGET, test_size=PROJECT_CONFIG["test_size"], random_state=SEED)
+
+def save_baseline_models(csv_path: str, models_directory: str = "outputs/models",
+                         check_reference: bool = True) -> list[str]:
+    """Retrain and save only the baseline pipelines, identical to those export_modeling saves.
+
+    Used where the .pkl files are not in Git (for example a fresh clone or a cloud deployment).
+    """
+    _, split = _primary_split(csv_path, check_reference)
+    folder = Path(models_directory)
+    folder.mkdir(parents=True, exist_ok=True)
+    paths = []
+    for name, train in BASELINES.items():
+        path = folder / f"{name}.pkl"
+        joblib.dump(train(split["X_train"], split["y_train"], random_state=SEED), path, compress=3)
+        paths.append(str(path))
+    return paths
+
+def export_modeling(csv_path: str, output_directory: str = "outputs", check_reference: bool = True,
+                    importance_sample: int = 10_000) -> dict:
+    """Export modeling artifacts for a CSV dataset."""
+    data, split = _primary_split(csv_path, check_reference)
     output = Path(output_directory)
 
     tables_dir, models_dir, figures_dir = output / "tables", output / "models", output / "figures"
@@ -85,8 +105,6 @@ def export_modeling(csv_path: str, output_directory: str = "outputs", check_refe
         fig.savefig(path, dpi=140, bbox_inches="tight")
         files.append(str(path.relative_to(output)))
 
-    # Split the data into training and test sets
-    split = split_data(data, TARGET, test_size=PROJECT_CONFIG["test_size"], random_state=SEED)
     X_train, X_test = split["X_train"], split["X_test"]
     y_train, y_test = split["y_train"], split["y_test"]
 

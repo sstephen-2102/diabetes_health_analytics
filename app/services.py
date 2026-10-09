@@ -43,6 +43,31 @@ def get_statistical_test_result(data: pd.DataFrame, test_type: str, feature: str
     """Dispatch supported statistical tests."""
     pass
 
+def ensure_model_files(models_directory: str, csv_path: str) -> bool:
+    """Retrain the saved pipelines if metadata.json exists but its .pkl files do not (they are not in Git).
+
+    Downloads the verified UCI dataset to csv_path first when it is missing. Returns True if it retrained.
+    """
+    import json
+    from pathlib import Path
+    from src.common.exceptions import DataLoadError
+    folder = Path(models_directory)
+    try:
+        metadata = json.loads((folder / "metadata.json").read_text(encoding="utf-8"))
+        artifacts = [folder / Path(record["artifact"]).name for record in metadata["models"].values()]
+    except (OSError, KeyError, ValueError):
+        return False
+    if all(path.is_file() for path in artifacts):
+        return False
+    from src.analysis.export_modeling import save_baseline_models
+    from src.data.loader import download_uci_dataset
+    try:
+        save_baseline_models(download_uci_dataset(csv_path), str(folder))
+    except Exception as exc:
+        raise DataLoadError(f"Saved models are missing and retraining failed: {exc}. "
+                            f"Run {EXPORT_COMMAND.format(module='modeling')} first.") from exc
+    return True
+
 def load_model_artifacts(models_directory: str = "outputs/models") -> dict:
     """Load exported models, metadata and metrics. Only for trusted, project-generated files (pickle)."""
     import json
