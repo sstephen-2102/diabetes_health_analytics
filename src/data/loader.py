@@ -5,7 +5,33 @@ import shutil
 import hashlib
 import pandas as pd
 from src.common.exceptions import DataLoadError
+from src.common.config import EXPECTED_COLUMNS
+from src.data.validation import validate_dataset
 
+def download_uci_dataset(output_path: str, dataset_id: int = 891) -> str:
+    """Download a UCI CDC dataset data, verify it against the reference, save as CSV.
+    Refuses to overwrite an existing file, returns CSV path."""
+    destination = Path(output_path)
+    if destination.exists():
+        return str(destination)
+    try:
+        from ucimlrepo import fetch_ucirepo
+        dataset = fetch_ucirepo(id=dataset_id)
+        data = pd.concat([dataset.data.features, dataset.data.targets], axis=1)
+    except Exception as exc:
+        raise DataLoadError(f'UCI acquisition failed: {exc}') from exc
+
+    checks = validate_dataset(data, EXPECTED_COLUMNS, "Diabetes_binary")
+    if not checks["is_valid"] or not checks["matches_reference"]:
+        raise DataLoadError("Downloaded dataset differs from project reference")
+
+    try:
+        destination.parent.mkdir(parents=True,exist_ok=True)
+        data.to_csv(destination, index=False)
+    except OSError as exc:
+        raise DataLoadError(f'Cannot save UCI dataset: {exc}') from exc
+    return str(destination)
+    
 def load_dataset(file_path: str) -> pd.DataFrame:
     """Read a non-empty numeric CSV preserving rows; wrap failures in DataLoadError.
 
