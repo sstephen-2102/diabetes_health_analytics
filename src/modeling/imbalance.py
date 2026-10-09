@@ -15,10 +15,7 @@ SUPPORTED_MODELS = {
 }
 
 def inspect_class_distribution(y) -> dict:
-    """Return class counts, percentages, imbalance ratio, majority/minority class.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Return class counts, percentages, imbalance ratio, majority/minority class."""
     if not isinstance(y, pd.Series):
         raise DataValidationError("y must be a pandas Series.")
     if not pd.api.types.is_numeric_dtype(y):
@@ -44,10 +41,7 @@ def inspect_class_distribution(y) -> dict:
 
 
 def balance_training_data(X_train, y_train, method: str = "undersample", random_state: int = 42) -> dict:
-    """Balance training data only; report before/after distributions.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Balance training data only; report before/after distributions."""
     if not isinstance(X_train, pd.DataFrame):
         raise DataValidationError("X_train must be a pandas DataFrame.")
     if not isinstance(y_train, pd.Series):
@@ -93,10 +87,7 @@ def balance_training_data(X_train, y_train, method: str = "undersample", random_
 
 
 def train_class_weighted_model(model_type: str, X_train, y_train, random_state: int = 42) -> object:
-    """Train supported class-weighted models; record strategy.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Train supported class-weighted models; record strategy."""
     
     if model_type not in SUPPORTED_MODELS:
         raise InvalidParameterError(f"Unsupported model type: {model_type}")

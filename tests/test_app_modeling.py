@@ -11,6 +11,7 @@ from streamlit.testing.v1 import AppTest
 
 from app import artifacts, services
 from app.components import charts
+from src.analysis.export_duplicate_sensitivity import SCENARIOS, export_duplicate_sensitivity
 from src.analysis.export_modeling import export_modeling
 from src.analysis.export_regression import export_regression
 from src.common.exceptions import DataLoadError, InvalidParameterError
@@ -25,21 +26,25 @@ PAGES = ["machine_learning", "imbalance_threshold", "calibration", "interpretati
 def outputs(tmp_path_factory):
     folder = tmp_path_factory.mktemp("app")
     output = folder / "outputs"
-    export_modeling(str(create_modeling_csv(folder / "modeling.csv")), str(output),
-                    check_reference=False, importance_sample=200)
+    modeling_csv = create_modeling_csv(folder / "modeling.csv")
+    export_modeling(str(modeling_csv), str(output), check_reference=False, importance_sample=200)
+    export_duplicate_sensitivity(str(modeling_csv), str(output), check_reference=False)
     export_regression(str(create_regression_csv(folder / "regression.csv")), str(output), check_reference=False)
     return output
+
+
+LOADERS = [artifacts.model_artifacts, artifacts.modeling_outputs, artifacts.regression_outputs,
+           artifacts.duplicate_sensitivity]
 
 
 @pytest.fixture
 def app_outputs(outputs, monkeypatch):
     """Point the app's cached loaders at the generated exports, with empty caches before and after."""
     monkeypatch.setattr(artifacts, "OUTPUTS", outputs)
-    loaders = [artifacts.model_artifacts, artifacts.modeling_outputs, artifacts.regression_outputs]
-    for loader in loaders:
+    for loader in LOADERS:
         loader.clear()
     yield outputs
-    for loader in loaders:
+    for loader in LOADERS:
         loader.clear()
 
 
@@ -90,10 +95,23 @@ def test_load_regression_outputs_contract(outputs):
     assert loaded["metadata"]["converged"] == {"baseline": True, "interaction": True}
 
 
+def test_load_duplicate_sensitivity_contract(outputs):
+    loaded = services.load_duplicate_sensitivity(str(outputs))
+    results = loaded["results"]
+
+    assert loaded["metadata"]["primary_scenario"] == "unique_grouped"
+    assert list(results["scenarios"].index) == list(SCENARIOS)
+    assert (results["all_test_rows"]["test_subset"] == "all").all()
+    assert len(results["all_test_rows"]) == len(SCENARIOS) * len(MODELS)
+    assert loaded["warnings"]
+
+
 @pytest.mark.parametrize("loader, command", [(services.load_modeling_outputs, "export_modeling"),
-                                             (services.load_regression_outputs, "export_regression")])
+                                             (services.load_regression_outputs, "export_regression"),
+                                             (services.load_duplicate_sensitivity, "export_duplicate_sensitivity"),
+                                             (services.load_model_artifacts, "export_modeling")])
 def test_loaders_explain_missing_exports(tmp_path, loader, command):
-    with pytest.raises(DataLoadError, match=command):
+    with pytest.raises(DataLoadError, match=f"{command} --csv data/raw/cdc_diabetes.csv"):
         loader(str(tmp_path))
 
 
@@ -219,13 +237,41 @@ def test_page_never_uses_diagnostic_language(app_outputs, page):
                                            ("prediction", "export_modeling")])
 def test_page_explains_missing_exports(tmp_path, monkeypatch, page, command):
     monkeypatch.setattr(artifacts, "OUTPUTS", tmp_path)
-    for loader in [artifacts.model_artifacts, artifacts.modeling_outputs, artifacts.regression_outputs]:
+    for loader in LOADERS:
         loader.clear()
 
     at = run_page(page)
 
     assert not at.exception
     assert command in at.error[0].value
+
+
+def test_machine_learning_page_shows_duplicate_sensitivity(app_outputs):
+    at = run_page("machine_learning")
+    text = page_text(at)
+
+    assert "Duplicate-handling sensitivity" in text
+    assert "full_clean_v1 and unique_profile_v1" in text
+    metric = next(s for s in at.selectbox if s.label == "Metric (all test rows)")
+    metric.set_value("Brier score").run()
+    assert not at.exception
+    assert len(at.dataframe) == 3
+
+
+def test_machine_learning_page_works_without_sensitivity_export(outputs, tmp_path, monkeypatch):
+    copy = tmp_path / "outputs"
+    shutil.copytree(outputs, copy)
+    (copy / "duplicate_sensitivity_manifest.json").unlink()
+    monkeypatch.setattr(artifacts, "OUTPUTS", copy)
+    for loader in LOADERS:
+        loader.clear()
+
+    at = run_page("machine_learning")
+
+    assert not at.exception
+    assert not at.error
+    assert any("export_duplicate_sensitivity" in i.value for i in at.info)
+    assert "Confusion matrix" in page_text(at)
 
 
 def test_threshold_slider_updates_threshold_metrics(app_outputs):

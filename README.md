@@ -38,7 +38,8 @@ streamlit run streamlit_app.py
 ```
 
 Read `docs/MODELING_REPORT.md` for the regression, classification, imbalance,
-threshold, calibration and interpretation results with report guidance.
+threshold, calibration and interpretation results with report guidance, and
+`docs/MEMBER3_HANDOFF.md` for function contracts, design decisions and test scope.
 
 ## Report
 

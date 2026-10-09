@@ -9,10 +9,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score, confusion_m
 from src.common.exceptions import DataValidationError, InvalidParameterError
 
 def evaluate_thresholds(y_true, probabilities, thresholds: list[float]) -> pd.DataFrame:
-    """Evaluate precision, recall, specificity, F1 across thresholds.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Evaluate precision, recall, specificity, F1 across thresholds."""
     if not isinstance(y_true, pd.Series):
         raise DataValidationError("y_true must be a pandas Series.")
     probabilities = np.asarray(probabilities, dtype=float)
@@ -53,10 +50,7 @@ def evaluate_thresholds(y_true, probabilities, thresholds: list[float]) -> pd.Da
     return pd.DataFrame(rows)
 
 def generate_threshold_curve(threshold_results: pd.DataFrame) -> pd.DataFrame:
-    """Prepare plotting data only.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Prepare plotting data only."""
     if not isinstance(threshold_results, pd.DataFrame):
         raise DataValidationError("threshold_results must be a pandas DataFrame.")
     if not all(col in threshold_results.columns for col in ["threshold", "precision", "recall", "specificity", "f1", "true_negatives", "false_positives", "false_negatives", "true_positives"]):

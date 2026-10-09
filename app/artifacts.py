@@ -22,3 +22,8 @@ def modeling_outputs() -> dict:
 @st.cache_data(show_spinner="Loading regression results...")
 def regression_outputs() -> dict:
     return services.load_regression_outputs(str(OUTPUTS))
+
+
+@st.cache_data(show_spinner="Loading duplicate-sensitivity results...")
+def duplicate_sensitivity() -> dict:
+    return services.load_duplicate_sensitivity(str(OUTPUTS))

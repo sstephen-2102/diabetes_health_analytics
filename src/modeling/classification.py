@@ -160,10 +160,7 @@ def train_logistic_classifier(X_train, y_train, class_weight=None, random_state:
 
 
 def train_random_forest(X_train, y_train, class_weight=None, random_state: int = 42, **model_parameters) -> object:
-    """Train Random Forest.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Train Random Forest."""
     # Validate feature data
     if not isinstance(X_train, pd.DataFrame):
         raise DataValidationError("X_train must be a pandas DataFrame.")
@@ -207,10 +204,7 @@ def train_random_forest(X_train, y_train, class_weight=None, random_state: int =
 
 
 def train_gradient_boosting(X_train, y_train, random_state: int = 42, **model_parameters) -> object:
-    """Train Gradient Boosting.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Train Gradient Boosting."""
      # Validate feature data
     if not isinstance(X_train, pd.DataFrame):
         raise DataValidationError("X_train must be a pandas DataFrame.")
@@ -248,10 +242,7 @@ def train_gradient_boosting(X_train, y_train, random_state: int = 42, **model_pa
     return model
 
 def generate_predictions(model, X, threshold: float = 0.50) -> dict:
-    """Return probabilities, predictions, threshold.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Return probabilities, predictions, threshold."""
     if not isinstance(model, Pipeline):
         raise DataValidationError("model must be a sklearn pipeline.")
     if not isinstance(X, pd.DataFrame):
@@ -278,10 +269,7 @@ def generate_predictions(model, X, threshold: float = 0.50) -> dict:
 
 
 def evaluate_classifier(y_true, y_pred, y_probability) -> dict:
-    """Return accuracy, precision, recall, specificity, F1, ROC-AUC, PR-AUC, confusion matrix, Brier score.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Return accuracy, precision, recall, specificity, F1, ROC-AUC, PR-AUC, confusion matrix, Brier score."""
     named = {"y_true": y_true, "y_pred": y_pred, "y_probability": y_probability}
     for name, values in named.items():
         if not isinstance(values, (pd.Series, np.ndarray, list)):
@@ -319,10 +307,7 @@ def evaluate_classifier(y_true, y_pred, y_probability) -> dict:
         "n": len(y_true)
     }
 def compare_models(evaluation_results: dict) -> pd.DataFrame:
-    """Create metric comparison table; do not embed universal best-model logic.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Create metric comparison table; do not embed universal best-model logic."""
     if not isinstance(evaluation_results, dict):
         raise DataValidationError("evaluation_results must be a dictionary.")
     if not evaluation_results:

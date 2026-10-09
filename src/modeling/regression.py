@@ -10,10 +10,7 @@ from scipy import stats
 from src.common.exceptions import DataValidationError, InvalidParameterError
 
 def fit_logistic_regression(data: pd.DataFrame, target_column: str, feature_columns: list[str], interaction_terms: list[tuple[str, str]] | None = None) -> dict:
-    """Fit statistical logistic regression; return coefficients, SE, p, OR, CI, model stats, design metadata.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Fit statistical logistic regression; return coefficients, SE, p, OR, CI, model stats, design metadata."""
     if not isinstance(data, pd.DataFrame):
         raise DataValidationError("data must be a pandas DataFrame.")
     if not isinstance(target_column, str):
@@ -81,10 +78,7 @@ def fit_logistic_regression(data: pd.DataFrame, target_column: str, feature_colu
     }
 
 def compare_regression_models(baseline_model: dict, interaction_model: dict) -> dict:
-    """Compare compatible regression specifications without automatic ranking.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Compare compatible regression specifications without automatic ranking."""
     if not isinstance(baseline_model, dict):
         raise DataValidationError("baseline_model must be a dictionary.")
     if not isinstance(interaction_model, dict):
@@ -122,10 +116,7 @@ def compare_regression_models(baseline_model: dict, interaction_model: dict) -> 
     
 
 def extract_odds_ratios(fitted_model) -> pd.DataFrame:
-    """Return feature, odds ratio, CI, p-value.
-
-    TODO: validate inputs, preserve reproducibility, and return structured results.
-    """
+    """Return feature, odds ratio, CI, p-value."""
     if not isinstance(fitted_model, dict):
         raise DataValidationError("fitted_model must be a dictionary.")
     if fitted_model.get("results") is None:

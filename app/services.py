@@ -1,5 +1,7 @@
 import pandas as pd
 
+EXPORT_COMMAND = "python -m src.analysis.export_{module} --csv data/raw/cdc_diabetes.csv"
+
 def get_dashboard_summary(data: pd.DataFrame, target_column: str) -> dict:
     """Generate dashboard summary from analytics functions."""
     from src.data._checks import require_binary_target
@@ -55,7 +57,7 @@ def load_model_artifacts(models_directory: str = "outputs/models") -> dict:
                   for name, record in metadata["models"].items()}
     except (OSError, KeyError, ValueError) as exc:
         raise DataLoadError(f"Cannot load model artifacts from {folder}: {exc}. "
-                            "Run python -m src.analysis.export_modeling first.") from exc
+                            f"Run {EXPORT_COMMAND.format(module='modeling')} first.") from exc
     return {"models": models, "metadata": metadata, "metrics": metrics}
 
 def _read_outputs(output_directory: str, manifest_name: str, tables: dict) -> tuple[dict, dict]:
@@ -70,7 +72,7 @@ def _read_outputs(output_directory: str, manifest_name: str, tables: dict) -> tu
     except (OSError, ValueError) as exc:
         module = manifest_name.replace("_manifest.json", "")
         raise DataLoadError(f"Cannot load {module} outputs from {folder}: {exc}. "
-                            f"Run python -m src.analysis.export_{module} first.") from exc
+                            f"Run {EXPORT_COMMAND.format(module=module)} first.") from exc
     return manifest, frames
 
 def load_modeling_outputs(output_directory: str = "outputs") -> dict:
@@ -86,7 +88,7 @@ def load_modeling_outputs(output_directory: str = "outputs") -> dict:
         names = list(metadata["models"])
     except (OSError, KeyError, ValueError) as exc:
         raise DataLoadError(f"Cannot load model metadata from {output_directory}: {exc}. "
-                            "Run python -m src.analysis.export_modeling first.") from exc
+                            f"Run {EXPORT_COMMAND.format(module='modeling')} first.") from exc
     per_model = {"thresholds": "thresholds_analysis", "calibration": "calibration_table",
                  "importance": "feature_importance", "roc": "roc_curve", "precision_recall": "precision_recall_curve"}
     tables = {"comparison": "model_comparison", "imbalance": "imbalance_experiments"}
@@ -132,6 +134,26 @@ def load_regression_outputs(output_directory: str = "outputs") -> dict:
             "dataset_variant": manifest["dataset_variant"], "target_definition": manifest["target_definition"],
             "metadata": {k: manifest[k] for k in ("timestamp", "dataset_version_sha256", "n", "feature_treatment",
                                                   "centering_means", "confidence_level", "converged")}}
+
+def load_duplicate_sensitivity(output_directory: str = "outputs") -> dict:
+    """Load the duplicate-handling sensitivity experiment (two dataset variants x two split types)."""
+    manifest, frames = _read_outputs(output_directory, "duplicate_sensitivity_manifest.json",
+                                     {"table": "duplicate_sensitivity"})
+    table = frames["table"]
+    scenarios = pd.DataFrame.from_dict(manifest["scenarios"], orient="index").rename_axis("scenario")
+    return {"status": "success",
+            "results": {"all_test_rows": table[table["test_subset"] == "all"].reset_index(drop=True),
+                        "subsets": table, "scenarios": scenarios},
+            "warnings": [f"Sensitivity analysis: the primary results use only the {manifest['primary_scenario']} "
+                         "scenario (grouped split on unique_profile_v1).",
+                         "Each scenario uses one seed and one split; AUC differences of about 0.005 or less "
+                         "are within sampling noise.",
+                         "full_clean_v1 test sets contain repeated, mostly low-risk profiles and a lower "
+                         "prevalence, so their metrics describe a different test population."],
+            "dataset_variant": "full_clean_v1 and unique_profile_v1",
+            "target_definition": manifest["target_definition"],
+            "metadata": {k: manifest[k] for k in ("timestamp", "dataset_version_sha256", "primary_scenario",
+                                                  "random_state", "test_size", "threshold", "seen_definition")}}
 
 def get_model_comparison(model_results: dict) -> pd.DataFrame:
     """Prepare model metrics for UI presentation; do not rank universally."""
