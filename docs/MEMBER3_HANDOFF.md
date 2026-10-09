@@ -172,7 +172,7 @@ streamlit run streamlit_app.py
   - `load_dataset` silently shifts columns when every row has one extra field, because pandas reads the first column as an index. Rows with mixed field counts are caught.
   - Education code 1 is "No schooling / kindergarten only" in `src/common/config.py` but "Never attended school / kindergarten only" in spec section 6.6.
 - **Not done:** hyperparameter tuning, cross-validation, a validation set, confidence intervals on ML metrics, survey weights and external validation. All are listed as limitations in `docs/MODELING_REPORT.md`.
-- **Excluded from Git:** raw data, `.venv/` and caches. The exported `outputs/` (including the `.pkl` models) are committed so the app runs without retraining.
+- **Excluded from Git:** raw data, `.venv/`, caches and the model files `outputs/models/*.pkl` (the random forest alone is about 86 MB). The exported tables, figures, `metadata.json` and `metrics.json` are committed, so every modeling page except the Prediction Explorer works from a fresh clone. Run `export_modeling` to recreate the `.pkl` files.
 
 ## Review
 
