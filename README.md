@@ -39,5 +39,11 @@ streamlit run streamlit_app.py
 Read `docs/MODELING_REPORT.md` for the regression, classification, imbalance,
 threshold, calibration and interpretation results with report guidance.
 
+## Report
+
+`docs/report_template.md` is the section-by-section skeleton for the final report
+(owners, sources, required figures and checks). `docs/references.md` holds the
+APA 7 reference list and which section cites each entry.
+
 Target code 1 follows the project definition: **prediabetes or diabetes**.
 This work is descriptive, unadjusted sample analysis; no causal or diagnostic claims.
