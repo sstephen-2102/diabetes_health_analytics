@@ -124,3 +124,23 @@ def test_random_forest_supports_class_weight(training_data):
     X, y = training_data
     model = train_random_forest(X, y, class_weight="balanced", n_estimators=20)
     assert model.named_steps["classifier"].class_weight == "balanced"
+
+
+def test_logistic_classifier_accepts_class_weight_dictionary(training_data):
+    X, y = training_data
+    model = train_logistic_classifier(X, y, class_weight={0: 1, 1: 5})
+    assert model.named_steps["classifier"].class_weight == {0: 1, 1: 5}
+
+
+@pytest.mark.parametrize("class_weight", ["balanced_subsample", {0: 1, 1: 5}])
+def test_random_forest_accepts_other_class_weights(training_data, class_weight):
+    X, y = training_data
+    model = train_random_forest(X, y, class_weight=class_weight, n_estimators=20)
+    assert model.named_steps["classifier"].class_weight == class_weight
+
+
+@pytest.mark.parametrize("train_fn", [train_logistic_classifier, train_random_forest])
+def test_invalid_class_weight_message_names_the_parameter(training_data, train_fn):
+    X, y = training_data
+    with pytest.raises(InvalidParameterError, match="class_weight must be"):
+        train_fn(X, y, class_weight="invalid")

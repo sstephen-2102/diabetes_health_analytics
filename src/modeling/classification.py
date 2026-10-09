@@ -116,7 +116,7 @@ def train_logistic_classifier(X_train, y_train, class_weight=None, random_state:
     if X_train.empty:
         raise DataValidationError("X_train must not be empty.")
     if X_train.columns.duplicated().any():
-        raise DataValidationError("X_train contains duplocate column names")
+        raise DataValidationError("X_train contains duplicate column names")
     if X_train.isnull().any().any():
         raise DataValidationError("X_train contains missing values")
     if not all(pd.api.types.is_numeric_dtype(dtype) for dtype in X_train.dtypes):
@@ -134,13 +134,8 @@ def train_logistic_classifier(X_train, y_train, class_weight=None, random_state:
         raise DataValidationError("y_train must contain exactly two classes.")
     
     # Validate class weight
-    if class_weight not in [None, "balanced", dict]:
-        raise InvalidParameterError("Logistic Regression requires exactly two target classes"
-        f"Found: {classes}")
-    
-    # Validate class weights
     if class_weight not in (None, "balanced") and not isinstance(class_weight, dict):
-        raise InvalidParameterError("class_weight must be None, 'balanced' or a disctionary.")
+        raise InvalidParameterError("class_weight must be None, 'balanced' or a dictionary.")
 
     # Build the pipeline
     model = Pipeline(
@@ -175,7 +170,7 @@ def train_random_forest(X_train, y_train, class_weight=None, random_state: int =
     if X_train.empty:
         raise DataValidationError("X_train must not be empty.")
     if X_train.columns.duplicated().any():
-        raise DataValidationError("X_train contains duplocate column names")
+        raise DataValidationError("X_train contains duplicate column names")
     if X_train.isnull().any().any():
         raise DataValidationError("X_train contains missing values")
     if not all(pd.api.types.is_numeric_dtype(dtype) for dtype in X_train.dtypes):
@@ -192,18 +187,9 @@ def train_random_forest(X_train, y_train, class_weight=None, random_state: int =
     if len(classes) != 2:
         raise DataValidationError("y_train must contain exactly two classes.")
     
-    # Validate class weight
-    if class_weight not in [None, "balanced", dict]:
-        raise InvalidParameterError("Logistic Regression requires exactly two target classes"
-        f"Found: {classes}")
-    
-    # Validate class weights
-    if class_weight not in (None, "balanced") and not isinstance(class_weight, dict):
-        raise InvalidParameterError("class_weight must be None, 'balanced' or a disctionary.")
-
     valid_cw = (None, "balanced", "balanced_subsample")
     if class_weight not in valid_cw and not isinstance(class_weight, dict):
-        raise InvalidParameterError("class_weight must be None, 'balanced', 'balanced_subsample' or a disctionary.")
+        raise InvalidParameterError("class_weight must be None, 'balanced', 'balanced_subsample' or a dictionary.")
 
     model = Pipeline([
         ("scaler", StandardScaler()),
@@ -231,7 +217,7 @@ def train_gradient_boosting(X_train, y_train, random_state: int = 42, **model_pa
     if X_train.empty:
         raise DataValidationError("X_train must not be empty.")
     if X_train.columns.duplicated().any():
-        raise DataValidationError("X_train contains duplocate column names")
+        raise DataValidationError("X_train contains duplicate column names")
     if X_train.isnull().any().any():
         raise DataValidationError("X_train contains missing values")
     if not all(pd.api.types.is_numeric_dtype(dtype) for dtype in X_train.dtypes):
@@ -273,7 +259,7 @@ def generate_predictions(model, X, threshold: float = 0.50) -> dict:
     if X.empty:
         raise DataValidationError("X must not be empty.")
     if X.columns.duplicated().any():
-        raise DataValidationError("X contains duplocate column names")
+        raise DataValidationError("X contains duplicate column names")
     if X.isnull().any().any():
         raise DataValidationError("X contains missing values")
     if not all(pd.api.types.is_numeric_dtype(dtype) for dtype in X.dtypes):

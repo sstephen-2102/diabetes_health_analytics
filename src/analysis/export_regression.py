@@ -148,5 +148,5 @@ if __name__ == "__main__":
     parser.add_argument("--output", default="outputs")
     args = parser.parse_args()
     manifest = export_regression(args.csv, args.output)
-    print(f"Exported {len(manifest['files'])} regression tables to {args.output} "
+    print(f"Exported {len(manifest['files'])} regression files to {args.output} "
           f"(interaction p = {manifest['interaction_term']['p_value']:.2e})")
