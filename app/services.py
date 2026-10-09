@@ -35,6 +35,43 @@ def get_eda_summary(data: pd.DataFrame, feature: str) -> dict:
             result["prevalence"] = calculate_prevalence_table(data, feature, target)
     return result
 
+def load_eda_data(csv_path: str) -> dict:
+    """Load the survey CSV and build EDA tables for full_clean_v1 and unique_profile_v1.
+
+    Downloads the verified UCI dataset to csv_path first when it is missing (raw data are not in Git).
+    """
+    import hashlib
+    from pathlib import Path
+    from src.analysis.eda import compare_dataset_variants
+    from src.common.config import EXPECTED_COLUMNS, TARGET_DEFINITION
+    from src.common.exceptions import DataLoadError, DataValidationError
+    from src.data.loader import download_uci_dataset, load_dataset
+    from src.data.validation import validate_dataset
+    try:
+        path = download_uci_dataset(csv_path)
+        raw = load_dataset(path)
+        comparison = compare_dataset_variants(raw)
+    except (DataLoadError, DataValidationError) as exc:
+        raise DataLoadError(f"Cannot prepare the survey dataset: {exc}. Place the CSV at {csv_path} "
+                            "or check the network connection to the UCI repository.") from exc
+    return {"status": "success",
+            "results": {**comparison, "raw_validation": validate_dataset(raw, EXPECTED_COLUMNS, "Diabetes_binary")},
+            "warnings": ["Unweighted sample statistics: BRFSS survey weights are not applied, so percentages "
+                         "describe this dataset, not U.S. population prevalence.",
+                         "Descriptive, unadjusted associations; no causal conclusions."],
+            "dataset_variant": "full_clean_v1 and unique_profile_v1",
+            "target_definition": TARGET_DEFINITION,
+            "metadata": {"source_file": Path(path).name, "rows": len(raw),
+                         "dataset_version_sha256": hashlib.sha256(Path(path).read_bytes()).hexdigest()}}
+
+def get_value_distribution(data: pd.DataFrame, feature: str) -> pd.DataFrame:
+    """Percentage of each target group at every observed value of a numeric feature (columns = target codes)."""
+    from src.common.config import PROJECT_CONFIG
+    from src.data._checks import require_frame
+    target = PROJECT_CONFIG["target_column"]
+    require_frame(data, [feature, target])
+    return pd.crosstab(data[feature], data[target], normalize="columns") * 100
+
 def get_probability_analysis(data: pd.DataFrame, target_column: str, target_value, conditions: dict) -> dict:
     """Coordinate conditional probability analysis."""
     pass

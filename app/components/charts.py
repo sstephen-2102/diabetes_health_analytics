@@ -1,4 +1,4 @@
-"""Presentation components: charts. Inputs are exported tables; outputs are Plotly figures."""
+"""Presentation components: charts. Inputs are exported or analytics tables; outputs are Plotly figures."""
 import plotly.graph_objects as go
 
 from app.components.tables import model_label
@@ -104,3 +104,65 @@ def bmi_by_age_chart(table) -> go.Figure:
     fig.add_hline(1, line_dash="dash", line_color="gray")
     return _layout(fig, "Odds ratio per 1-unit BMI increase, by age group", "Age group",
                    "BMI odds ratio (95% CI)", showlegend=False)
+
+
+TARGET_COLORS = {0: "#7f9fbf", 1: "#d62728"}
+
+
+def target_distribution_chart(summary) -> go.Figure:
+    labels = [f"{code}: {label}" for code, label in zip(summary["category"], summary["label"])]
+    fig = go.Figure(go.Bar(x=labels, y=summary["count"],
+                           marker_color=[TARGET_COLORS[c] for c in summary["category"]],
+                           text=[f"{n:,} ({p:.1f}%)" for n, p in zip(summary["count"], summary["percentage"])],
+                           textposition="outside"))
+    return _layout(fig, "Target distribution", "", "Respondents", height=360, showlegend=False,
+                   yaxis_range=[0, summary["count"].max() * 1.15])
+
+
+def category_share_chart(summary, title: str) -> go.Figure:
+    fig = go.Figure(go.Bar(x=summary["percentage"], y=summary["label"].astype(str), orientation="h",
+                           text=[f"{p:.1f}%" for p in summary["percentage"]], textposition="outside",
+                           customdata=summary["count"],
+                           hovertemplate="%{y}: %{x:.2f}% (n = %{customdata:,})<extra></extra>"))
+    return _layout(fig, title, "Share of respondents (%)", "", yaxis_autorange="reversed", showlegend=False,
+                   height=max(320, 32 * len(summary)), xaxis_range=[0, summary["percentage"].max() * 1.2])
+
+
+def prevalence_chart(prevalence, overall: float, title: str) -> go.Figure:
+    fig = go.Figure(go.Bar(x=prevalence["target_percentage"], y=prevalence["label"].astype(str), orientation="h",
+                           marker_color=TARGET_COLORS[1],
+                           text=[f"{p:.1f}%" for p in prevalence["target_percentage"]], textposition="outside",
+                           customdata=prevalence[["target_count", "total_observations"]],
+                           hovertemplate="%{y}: %{x:.2f}% (%{customdata[0]:,} of %{customdata[1]:,})<extra></extra>"))
+    fig.add_vline(overall, line_dash="dash", line_color="gray", annotation_text=f"overall {overall:.1f}%")
+    return _layout(fig, title, "Category 1 share within group (%)", "", yaxis_autorange="reversed",
+                   showlegend=False, height=max(320, 32 * len(prevalence)),
+                   xaxis_range=[0, prevalence["target_percentage"].max() * 1.2])
+
+
+def value_distribution_chart(table, target_labels: dict, title: str, x_title: str) -> go.Figure:
+    fig = go.Figure()
+    for code in table.columns:
+        fig.add_scatter(x=table.index, y=table[code], mode="lines+markers", name=target_labels[code],
+                        line_color=TARGET_COLORS[code], marker_size=4)
+    return _layout(fig, title, x_title, "Share of target group (%)", legend=dict(orientation="h", y=-0.2))
+
+
+def binary_comparison_chart(table, labels: dict) -> go.Figure:
+    ordered = table.sort_values("difference_percentage_points")
+    names = [labels.get(f, f) for f in ordered["feature"]]
+    fig = go.Figure()
+    fig.add_bar(y=names, x=ordered["category_1_percent_no"], orientation="h", name="Code 0 (No; Female for Sex)",
+                marker_color=TARGET_COLORS[0])
+    fig.add_bar(y=names, x=ordered["category_1_percent_yes"], orientation="h", name="Code 1 (Yes; Male for Sex)",
+                marker_color=TARGET_COLORS[1])
+    return _layout(fig, "Category 1 share by answer to each binary indicator", "Category 1 share (%)", "",
+                   barmode="group", height=max(420, 40 * len(ordered)), legend=dict(orientation="h", y=-0.1))
+
+
+def correlation_heatmap(matrix, labels: dict) -> go.Figure:
+    names = [labels.get(c, c) for c in matrix.columns]
+    fig = go.Figure(go.Heatmap(z=matrix.values, x=names, y=names, zmin=-1, zmax=1, colorscale="RdBu_r",
+                               text=[[f"{v:.2f}" for v in row] for row in matrix.values], texttemplate="%{text}",
+                               colorbar_title="rho"))
+    return _layout(fig, "Spearman rank correlation", "", "", height=560, yaxis_autorange="reversed")

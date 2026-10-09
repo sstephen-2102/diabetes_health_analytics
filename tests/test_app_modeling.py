@@ -355,7 +355,12 @@ def test_prediction_page_lists_defaulted_inputs(app_outputs):
     assert "Income" in text
 
 
-def test_app_navigation_loads(app_outputs):
+def test_app_navigation_loads(app_outputs, monkeypatch):
+    monkeypatch.setattr(artifacts, "RAW_CSV", app_outputs.parent / "modeling.csv")
+    artifacts.eda_data.clear()
+
     at = AppTest.from_file("../streamlit_app.py", default_timeout=60).run()
+    artifacts.eda_data.clear()
 
     assert not at.exception, [e.message for e in at.exception]
+    assert "ROC AUC ranges from" in " ".join(m.value for m in at.markdown)

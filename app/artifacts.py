@@ -1,4 +1,4 @@
-"""Cached access to exported modeling artifacts, so pages do not reload them on every rerun."""
+"""Cached access to the survey data and exported modeling artifacts, so pages do not reload them on every rerun."""
 from pathlib import Path
 
 import streamlit as st
@@ -7,6 +7,12 @@ from app import services
 
 OUTPUTS = Path(__file__).resolve().parents[1] / "outputs"
 RAW_CSV = Path(__file__).resolve().parents[1] / "data" / "raw" / "cdc_diabetes.csv"
+
+
+@st.cache_resource(show_spinner="Loading the survey dataset (the first launch after a fresh clone downloads it)...")
+def eda_data() -> dict:
+    """DataFrames are shared, not copied: pages must not modify them."""
+    return services.load_eda_data(str(RAW_CSV))
 
 
 @st.cache_resource(show_spinner="Loading saved models (the first launch after a fresh clone retrains them, "
