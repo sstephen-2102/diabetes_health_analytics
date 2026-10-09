@@ -36,6 +36,6 @@ VARIABLE_METADATA.update({
  'PhysHlth':_variable('Poor physical-health days','Poor physical-health days in past 30 days; zero is valid.','discrete_numeric',unit='days',minimum=0,maximum=30),
  'GenHlth':_variable('General health','Ordered self-reported general-health rating.','ordinal',{1:'Excellent',2:'Very good',3:'Good',4:'Fair',5:'Poor'},True),
  'Age':_variable('Age group','Grouped age, not age in years.','ordinal',dict(enumerate(['18–24','25–29','30–34','35–39','40–44','45–49','50–54','55–59','60–64','65–69','70–74','75–79','80+'],1)),True),
- 'Education':_variable('Education','Highest completed education category.','ordinal',{1:'No schooling / kindergarten only',2:'Grades 1–8',3:'Grades 9–11',4:'Grade 12 / GED',5:'Some college / technical school',6:'College graduate / 4+ years'}),
+ 'Education':_variable('Education','Highest completed education category.','ordinal',{1:'Never attended school / kindergarten only',2:'Grades 1–8',3:'Grades 9–11',4:'Grade 12 / GED',5:'Some college / technical school',6:'College graduate / 4+ years'}),
  'Income':_variable('Household income','Annual household income in USD; brackets, not exact amounts.','ordinal',{1:'Under USD 10,000',2:'USD 10,000–<15,000',3:'USD 15,000–<20,000',4:'USD 20,000–<25,000',5:'USD 25,000–<35,000',6:'USD 35,000–<50,000',7:'USD 50,000–<75,000',8:'USD 75,000+'})
 })

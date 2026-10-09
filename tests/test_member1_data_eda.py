@@ -1,4 +1,5 @@
 """Meaningful data/EDA contract tests, runnable with unittest or pytest."""
+import re
 import sys
 import tempfile
 import types
@@ -52,6 +53,20 @@ class LoaderTests(unittest.TestCase):
                 path.write_text(content)
                 with self.subTest(content=content), self.assertRaises(DataLoadError):
                     load_dataset(str(path))
+
+    def test_every_row_with_extra_field_raises_instead_of_shifting(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/'sample.csv'
+            for content in ['a,b\n1,2,3\n4,5,6\n', 'a,b\n0,25,99\n1,30,98\n']:
+                path.write_text(content)
+                with self.subTest(content=content), self.assertRaisesRegex(DataLoadError,'more fields than the header'):
+                    load_dataset(str(path))
+
+    def test_trailing_delimiters_keep_columns_aligned(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/'sample.csv'
+            path.write_text('a,b\n0,25,\n1,30,\n')
+            assert_frame_equal(load_dataset(str(path)),pd.DataFrame({'a':[0,1],'b':[25,30]}))
 
     def test_kaggle_copies_nested_csv_and_refuses_raw_overwrite(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -211,6 +226,16 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(get_dashboard_summary(fixture(),'Diabetes_binary')['status'],'success')
         self.assertIn('prevalence',get_eda_summary(fixture(),'Age'))
         self.assertNotIn('prevalence',get_eda_summary(fixture(),'BMI'))
+
+
+class DocumentationTests(unittest.TestCase):
+    def test_education_labels_match_specification_and_dictionary(self):
+        docs = Path(__file__).resolve().parents[1]/'docs'
+        for name,header in [('PROJECT_SPECIFICATION.md','**Education**'),('DATA_DICTIONARY.md','| Education | Label |')]:
+            block = (docs/name).read_text(encoding='utf-8').split(header,1)[1].strip().split('\n\n',1)[0]
+            labels = {int(code):label for code,label in re.findall(r'^\|\s*(\d+)\s*\|\s*(.+?)\s*\|$',block,re.M)}
+            with self.subTest(document=name):
+                self.assertEqual(labels,VARIABLE_METADATA['Education']['category_labels'])
 
 
 if __name__ == '__main__':
