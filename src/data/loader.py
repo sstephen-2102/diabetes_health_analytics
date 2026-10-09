@@ -1,6 +1,7 @@
 """CSV loading and optional Kaggle acquisition; no raw-data overwrites."""
 from pathlib import Path
 import csv
+import warnings
 import shutil
 import hashlib
 import pandas as pd
@@ -45,7 +46,14 @@ def load_dataset(file_path: str) -> pd.DataFrame:
             header = next(csv.reader(stream))
         if len(header) != len(set(header)):
             raise ValueError('CSV has duplicate column names.')
-        data = pd.read_csv(path,on_bad_lines='error')
+        # Without index_col=False, rows that all carry one extra field are read with
+        # the first column as the index, silently shifting every value left.
+        with warnings.catch_warnings():
+            warnings.simplefilter('error',pd.errors.ParserWarning)
+            try:
+                data = pd.read_csv(path,on_bad_lines='error',index_col=False)
+            except pd.errors.ParserWarning as exc:
+                raise ValueError('Rows have more fields than the header.') from exc
         if data.empty or data.shape[1] < 2:
             raise ValueError('CSV is empty or has no usable table schema.')
         if not all(pd.api.types.is_numeric_dtype(data[c]) for c in data):
