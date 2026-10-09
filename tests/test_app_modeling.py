@@ -18,7 +18,7 @@ from tests.test_export_modeling import MODELS
 from tests.test_export_modeling import create_survey_csv as create_modeling_csv
 from tests.test_export_regression import create_survey_csv as create_regression_csv
 
-PAGES = ["machine_learning", "imbalance_threshold", "calibration", "prediction"]
+PAGES = ["machine_learning", "imbalance_threshold", "calibration", "interpretation", "regression_lab", "prediction"]
 
 
 @pytest.fixture(scope="module")
@@ -215,7 +215,7 @@ def test_page_never_uses_diagnostic_language(app_outputs, page):
 
 
 @pytest.mark.parametrize("page, command", [("machine_learning", "export_modeling"),
-                                           ("calibration", "export_modeling"),
+                                           ("regression_lab", "export_regression"),
                                            ("prediction", "export_modeling")])
 def test_page_explains_missing_exports(tmp_path, monkeypatch, page, command):
     monkeypatch.setattr(artifacts, "OUTPUTS", tmp_path)
