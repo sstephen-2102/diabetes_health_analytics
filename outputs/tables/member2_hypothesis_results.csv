@@ -1,0 +1,15 @@
+hypothesis,feature,test,dataset_variant,n,statistic,dof,p_value,p_label,effect_measure,effect_value,odds_ratio,or_lower,or_upper,summary,warnings
+H1,HighBP,Chi-square,full_clean_v1,253680,17563.9813,1.0,0.0,<0.001,cramers_v,0.2631,5.0375,4.9099,5.1685,0: 6.04%; 1: 24.45%,
+H2,HighChol,Chi-square,full_clean_v1,253680,10175.2451,1.0,0.0,<0.001,cramers_v,0.2003,3.2546,3.1781,3.333,0: 7.98%; 1: 22.01%,
+H3,BMI,Welch t-test,full_clean_v1,253680,99.9196,44093.4028,0.0,<0.001,cohens_d,0.6414,,,,"mean BMI 31.94 (category 1) vs 27.81 (category 0); difference 4.14 [4.06, 4.22]",group_a is strongly skewed (skewness 1.53); interpret mean differences cautiously. | group_b is strongly skewed (skewness 2.33); interpret mean differences cautiously.
+H4,PhysActivity,Chi-square,full_clean_v1,253680,3540.2142,1.0,0.0,<0.001,cramers_v,0.1181,0.49,0.4784,0.5018,0: 21.14%; 1: 11.61%,
+H5,Smoker,Chi-square,full_clean_v1,253680,937.4091,1.0,0.0,<0.001,cramers_v,0.0608,1.4199,1.3883,1.4523,0: 12.06%; 1: 16.29%,
+H6,Age,Chi-square,full_clean_v1,253680,8795.0506,12.0,0.0,<0.001,cramers_v,0.1862,,,,category 1 share ranges from 1.37% (value 1) to 21.85% (value 11),
+H7,Income,Chi-square,full_clean_v1,253680,7003.7151,7.0,0.0,<0.001,cramers_v,0.1662,,,,category 1 share ranges from 7.96% (value 8) to 26.19% (value 2),
+H1,HighBP,Chi-square,unique_profile_v1,229474,14841.8408,1.0,0.0,<0.001,cramers_v,0.2543,4.5466,4.4305,4.6658,0: 6.94%; 1: 25.33%,
+H2,HighChol,Chi-square,unique_profile_v1,229474,8720.7476,1.0,0.0,<0.001,cramers_v,0.1949,3.0316,2.9597,3.1053,0: 9.05%; 1: 23.18%,
+H3,BMI,Welch t-test,unique_profile_v1,229474,91.9595,45464.9142,0.0,<0.001,cohens_d,0.5822,,,,"mean BMI 31.96 (category 1) vs 28.10 (category 0); difference 3.87 [3.79, 3.95]",group_a is strongly skewed (skewness 1.52); interpret mean differences cautiously. | group_b is strongly skewed (skewness 2.27); interpret mean differences cautiously.
+H4,PhysActivity,Chi-square,unique_profile_v1,229474,2313.3342,1.0,0.0,<0.001,cramers_v,0.1004,0.5582,0.545,0.5718,0: 21.28%; 1: 13.11%,
+H5,Smoker,Chi-square,unique_profile_v1,229474,475.1519,1.0,0.0,<0.001,cramers_v,0.0455,1.2876,1.2586,1.3172,0: 13.77%; 1: 17.05%,
+H6,Age,Chi-square,unique_profile_v1,229474,8207.8316,12.0,0.0,<0.001,cramers_v,0.1891,,,,category 1 share ranges from 1.42% (value 1) to 23.14% (value 11),
+H7,Income,Chi-square,unique_profile_v1,229474,4637.1957,7.0,0.0,<0.001,cramers_v,0.1422,,,,category 1 share ranges from 9.83% (value 8) to 26.25% (value 2),
