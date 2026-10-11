@@ -52,7 +52,7 @@ a check within five years. Income is annual household income in USD.
 
 | Education | Label |
 |---:|---|
-| 1 | No schooling / kindergarten only |
+| 1 | Never attended school / kindergarten only |
 | 2 | Grades 1–8 |
 | 3 | Grades 9–11 |
 | 4 | Grade 12 / GED |
