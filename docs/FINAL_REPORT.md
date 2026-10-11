@@ -12,12 +12,12 @@
 ## Title page
 
 - **Title:** Diabetes Health Analytics & Prediction Lab
-- **Course:** [COURSE CODE AND NAME]
-- **Team:** [MEMBER 1 NAME] (data and EDA); [MEMBER 2 NAME] (probability and inference);
-  [MEMBER 3 NAME] (regression and machine learning)
-- **Date:** [SUBMISSION DATE]
+- **Course:** AAI-500 Probability and Statistics for AI
+- **Team:** Arunava Banerjee (data and EDA); Binish Hamdani (probability and inference);
+  Sanjay Varghese Stephen (regression and machine learning)
+- **Date:** 19 October 2026
 - **Repository:** https://github.com/sstephen-2102/diabetes_health_analytics, commit [FINAL COMMIT HASH]
-- **Live application:** [STREAMLIT APP URL]
+- **Live application:** https://diabeteshealthanalytics-arunava-binish-sanjay.streamlit.app
 
 ## Abstract (optional, about 200 words)
 
@@ -802,7 +802,7 @@ streamlit run streamlit_app.py
 
 ## Appendix B. Streamlit application
 
-Live at [STREAMLIT APP URL]. Add one screenshot per page with one sentence each:
+Live at https://diabeteshealthanalytics-arunava-binish-sanjay.streamlit.app. Add one screenshot per page with one sentence each:
 
 | Page | What it shows |
 |---|---|

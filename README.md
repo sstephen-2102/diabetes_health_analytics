@@ -4,6 +4,8 @@ University of San Diego M.S. Applied AI team project: statistics, inference, reg
 learning on the CDC BRFSS 2015 Diabetes Health Indicators dataset (UCI Machine Learning Repository,
 dataset 891; 253,680 survey responses, 21 features), delivered as an interactive Streamlit app.
 
+**Live app:** https://diabeteshealthanalytics-arunava-binish-sanjay.streamlit.app
+
 **Target.** `Diabetes_binary`: 0 = neither prediabetes nor diabetes; 1 = **prediabetes or diabetes**
 (project-defined outcome). Category 1 is not a diagnosis; never describe it as "diabetic".
 
