@@ -24,4 +24,4 @@
 - [ ] Prose reviewed and rewritten by the team.
 - [ ] Every figure and table caption still names its dataset variant after editing.
 - [ ] Final commit hash added (title page and Appendix A).
-- [ ] App opens without signing in (check in a private window).
+- [x] App opens without signing in (checked in a private window).
