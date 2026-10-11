@@ -1,6 +1,7 @@
 """Hypothesis tests (Member 2): chi-square and Welch t-test.
 
-ANOVA, post-hoc analysis, and multiple-comparison adjustment remain stubs pending clarity from Sanjay.
+ANOVA, post-hoc analysis, and multiple-comparison adjustment remain unimplemented stubs: the team scoped them
+out because H1-H7 need only chi-square and Welch tests (see docs/MEMBER2_HANDOFF.md).
 """
 import numpy as np
 import pandas as pd

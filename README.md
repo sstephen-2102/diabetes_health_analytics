@@ -1,51 +1,99 @@
 # Diabetes Health Analytics & Prediction Lab
 
-Function Signature Skeleton v1 for the University of San Diego M.S. Applied AI team project.
+University of San Diego M.S. Applied AI team project: statistics, inference, regression and machine
+learning on the CDC BRFSS 2015 Diabetes Health Indicators dataset (UCI Machine Learning Repository,
+dataset 891; 253,680 survey responses, 21 features), delivered as an interactive Streamlit app.
 
-The repository began as a function-signature skeleton. Member 1 data validation,
-explicit data variants, descriptive summaries and EDA exports are now implemented.
-Inference, modeling and the full Streamlit application remain separate team work.
+**Target.** `Diabetes_binary`: 0 = neither prediabetes nor diabetes; 1 = **prediabetes or diabetes**
+(project-defined outcome). Category 1 is not a diagnosis; never describe it as "diabetic".
 
-Architecture: Streamlit UI -> Service Layer -> Analytics -> Data.
+**Dataset variants.** Every result names the variant it uses.
 
-Team: Member 1 = data/EDA; Member 2 = statistics; Member 3 = modeling; shared = common/analysis/app/tests.
+| Variant | Rows | Used for |
+|---|---|---|
+| `full_clean_v1` | 253,680 (all rows) | Descriptive statistics and inference |
+| `unique_profile_v1` | 229,474 (24,206 repeated rows removed) | Machine learning, with a grouped split so no profile is in both training and test sets |
 
-Target: `Diabetes_binary`. Verify exact dataset columns and category mappings before implementation.
+Architecture: Streamlit UI → service layer (`app/services.py`) → analytics (`src/`) → data layer.
+Pages never compute statistics themselves.
 
-## Member 1 EDA
-
-Open `notebooks/CDC_DIABETES_EDA.ipynb` inside this repository and run all cells.
-It downloads UCI dataset 891 if the local raw CSV is absent, verifies the reference,
-and uses the original full sample for EDA. Raw files are excluded from Git.
+## Quick start
 
 ```text
 python -m pip install -r requirements.txt
-python -m unittest tests.test_member1_data_eda -v
-python -m src.analysis.export_eda --csv data/raw/cdc_diabetes.csv
-```
-
-Outputs identify `full_clean_v1` and `unique_profile_v1`. Read
-`outputs/EDA_RESULTS.md`, `docs/DATA_DICTIONARY.md` and
-`docs/MEMBER1_HANDOFF.md` for results, signatures, decisions and test scope.
-
-## Member 3 modeling
-
-```text
-python -m src.analysis.export_regression --csv data/raw/cdc_diabetes.csv
-python -m src.analysis.export_modeling --csv data/raw/cdc_diabetes.csv
-python -m src.analysis.export_duplicate_sensitivity --csv data/raw/cdc_diabetes.csv
 streamlit run streamlit_app.py
 ```
 
-Read `docs/MODELING_REPORT.md` for the regression, classification, imbalance,
-threshold, calibration and interpretation results with report guidance, and
-`docs/MEMBER3_HANDOFF.md` for function contracts, design decisions and test scope.
+The raw CSV and the fitted model files are not in Git. On first launch the app downloads the verified
+UCI dataset to `data/raw/cdc_diabetes.csv` and retrains any missing models (a few minutes). Exported
+tables and figures in `outputs/` are committed, so every page works straight after the download.
 
-## Report
+Always launch `streamlit_app.py` from the repository root; `streamlit run app/app.py` breaks imports.
+The dev container (`.devcontainer/`) starts the app automatically in GitHub Codespaces.
 
-`docs/report_template.md` is the section-by-section skeleton for the final report
-(owners, sources, required figures and checks). `docs/references.md` holds the
-APA 7 reference list and which section cites each entry.
+## App pages
 
-Target code 1 follows the project definition: **prediabetes or diabetes**.
-This work is descriptive, unadjusted sample analysis; no causal or diagnostic claims.
+| Section | Page | Owner |
+|---|---|---|
+| Data | Executive Dashboard: key figures, selected findings, research questions, methodology notes | Member 1 |
+| Data | Data Explorer: schema, category mappings, descriptive statistics, data quality | Member 1 |
+| Data | Exploratory Analysis: per-variable views, binary indicators, correlations, full vs unique sample | Member 1 |
+| Statistics | Probability Explorer: marginal, joint and conditional probability; Bayes' theorem check | Member 2 |
+| Statistics | Statistical Testing Lab: H1-H7, chi-square and Welch tests, effect sizes, confidence intervals | Member 2 |
+| Statistics | Regression Lab: baseline and BMI × Age interaction logistic regression, odds ratios | Member 3 |
+| Modeling | Machine Learning Lab, Imbalance & Threshold Lab, Calibration, Interpretation | Member 3 |
+| Modeling | Prediction Explorer: model-estimated probability for a feature profile (not a diagnosis) | Member 3 |
+
+## Reproduce the outputs
+
+Regenerate every table, figure and model in `outputs/` (downloads the CSV if it is missing):
+
+```text
+python -m src.analysis.pipeline --csv data/raw/cdc_diabetes.csv
+```
+
+Or run one step at a time, in this order:
+
+```text
+python -m src.analysis.export_eda --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_member2 --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_regression --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_modeling --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_duplicate_sensitivity --csv data/raw/cdc_diabetes.csv
+```
+
+`notebooks/CDC_DIABETES_EDA.ipynb` walks through the exploratory analysis and downloads the dataset in
+its first cell. Every export validates the CSV schema first; all except the statistics export also check it
+against the reference dimensions and counts.
+
+## Tests
+
+```text
+python -m pytest tests/ -q
+```
+
+Tests use small synthetic CSVs, so they need neither the real dataset nor a network connection.
+
+## Documentation
+
+| File | Contents |
+|---|---|
+| `docs/PROJECT_SPECIFICATION.md` | Authoritative requirements: research questions, hypotheses, methods, definition of done |
+| `docs/DATA_DICTIONARY.md` | Every variable, its coding and labels |
+| `docs/MEMBER1_HANDOFF.md` | Data layer and EDA: contracts, decisions, test scope |
+| `docs/MEMBER2_HANDOFF.md` | Probability and inference: contracts, H1-H7 results, scope decisions |
+| `docs/MEMBER3_HANDOFF.md` | Regression and modeling: contracts, design decisions, test scope |
+| `outputs/EDA_RESULTS.md` | EDA results summary |
+| `docs/MODELING_REPORT.md` | Regression, classification, imbalance, threshold, calibration and interpretation results |
+| `docs/report_template.md` | Section-by-section skeleton for the final report |
+| `docs/references.md` | APA 7 references and which report section cites each |
+
+## Scope and limitations
+
+- Unweighted sample statistics: BRFSS survey weights and design are not applied, so results describe
+  this dataset, not U.S. population prevalence.
+- Cross-sectional, self-reported data: associations are not causal.
+- No multiple-comparison adjustment is applied to H1-H7, and ANOVA and post-hoc tests are not
+  implemented (team decision; see `docs/MEMBER2_HANDOFF.md`).
+- Model performance on this dataset does not establish clinical utility; predictions are statistical
+  estimates, not medical advice.

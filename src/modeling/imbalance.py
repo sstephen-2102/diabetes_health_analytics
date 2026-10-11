@@ -1,6 +1,6 @@
-"""Function signature skeleton module.
+"""Class-imbalance handling (Member 3): class distribution, training-set balancing and class-weighted models.
 
-Implementation intentionally omitted; use TODOs as the contract.
+Balancing is applied to training data only; test data are never resampled.
 """
 
 import pandas as pd

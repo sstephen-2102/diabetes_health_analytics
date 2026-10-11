@@ -1,7 +1,4 @@
-"""Function signature skeleton module.
-
-Implementation intentionally omitted; use TODOs as the contract.
-"""
+"""Statistical logistic regression (Member 3): baseline and interaction models, odds ratios and model comparison."""
 
 import pandas as pd
 import numpy as np

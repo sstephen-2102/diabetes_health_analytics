@@ -1,7 +1,4 @@
-"""Function signature skeleton module.
-
-Implementation intentionally omitted; use TODOs as the contract.
-"""
+"""Decision thresholds (Member 3): precision, recall, specificity and F1 across classification thresholds."""
 
 import pandas as pd
 import numpy as np
