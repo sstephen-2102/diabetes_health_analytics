@@ -11,3 +11,17 @@
 - [x] Build Streamlit pages.
 - [x] Add tests.
 - [ ] Validate report/presentation outputs.
+
+## Final report checks (`docs/FINAL_REPORT.md`)
+
+- [x] Course, names, date and app URL filled in.
+- [x] Prose drafted for every section; guidance and source notes removed.
+- [x] App screenshots in Appendix B (`docs/figures/app/`).
+- [x] Every reference cited in the text and every citation listed (APA 7).
+- [x] No "diagnosis" language except disclaimers; target wording consistent.
+- [x] Deviation from the spec stated: no ANOVA, post-hoc tests or multiplicity adjustment (team decision).
+- [x] All ten spec limitations present.
+- [ ] Prose reviewed and rewritten by the team.
+- [ ] Every figure and table caption still names its dataset variant after editing.
+- [ ] Final commit hash added (title page and Appendix A).
+- [ ] App opens without signing in (check in a private window).
