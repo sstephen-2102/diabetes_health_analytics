@@ -1,0 +1,149 @@
+{
+  "test_metrics": {
+    "logistic_regression": {
+      "accuracy": 0.8516396121581872,
+      "precision": 0.5542916235780765,
+      "recall": 0.15272830887590824,
+      "specificity": 0.9778269369276674,
+      "f1": 0.23947280241259913,
+      "roc_auc": 0.8096336977164901,
+      "pr_auc": 0.41446937683215695,
+      "brier_score": 0.10749853182984548,
+      "confusion_matrix": {
+        "true_negatives": 38014,
+        "false_positives": 862,
+        "false_negatives": 5947,
+        "true_positives": 1072
+      },
+      "n": 45895
+    },
+    "random_forest": {
+      "accuracy": 0.8496350364963504,
+      "precision": 0.5240032546786005,
+      "recall": 0.18350192335090468,
+      "specificity": 0.9699043111431217,
+      "f1": 0.27181597551967923,
+      "roc_auc": 0.7894924636891318,
+      "pr_auc": 0.39632354301929557,
+      "brier_score": 0.11038981368894489,
+      "confusion_matrix": {
+        "true_negatives": 37706,
+        "false_positives": 1170,
+        "false_negatives": 5731,
+        "true_positives": 1288
+      },
+      "n": 45895
+    },
+    "gradient_boosting": {
+      "accuracy": 0.8545157424556051,
+      "precision": 0.5875127942681678,
+      "recall": 0.1635560621171107,
+      "specificity": 0.9792674143430394,
+      "f1": 0.2558787473531706,
+      "roc_auc": 0.8185076295711753,
+      "pr_auc": 0.4411537048451647,
+      "brier_score": 0.10507639632189014,
+      "confusion_matrix": {
+        "true_negatives": 38070,
+        "false_positives": 806,
+        "false_negatives": 5871,
+        "true_positives": 1148
+      },
+      "n": 45895
+    }
+  },
+  "calibration": {
+    "logistic_regression": {
+      "brier_score": 0.10749853182984548,
+      "expected_calibration_error": 0.011673621661309216,
+      "n_bins": 10,
+      "n": 45895
+    },
+    "random_forest": {
+      "brier_score": 0.11038981368894489,
+      "expected_calibration_error": 0.02126515026535726,
+      "n_bins": 10,
+      "n": 45895
+    },
+    "gradient_boosting": {
+      "brier_score": 0.10507639632189014,
+      "expected_calibration_error": 0.007420643447125366,
+      "n_bins": 10,
+      "n": 45895
+    }
+  },
+  "imbalance_experiments": [
+    {
+      "strategy": "original",
+      "model": "logistic_regression",
+      "dataset_variant": "unique_profile_v1",
+      "seed": 42,
+      "threshold": 0.5,
+      "train_negatives_before": 155501,
+      "train_positives_before": 28078,
+      "train_negatives_after": 155501,
+      "train_positives_after": 28078,
+      "accuracy": 0.8516396121581872,
+      "precision": 0.5542916235780765,
+      "recall": 0.15272830887590824,
+      "specificity": 0.9778269369276674,
+      "f1": 0.23947280241259913,
+      "roc_auc": 0.8096336977164901,
+      "pr_auc": 0.41446937683215695,
+      "brier_score": 0.10749853182984548,
+      "n": 45895,
+      "true_negatives": 38014,
+      "false_positives": 862,
+      "false_negatives": 5947,
+      "true_positives": 1072
+    },
+    {
+      "strategy": "class_weighted",
+      "model": "logistic_regression",
+      "dataset_variant": "unique_profile_v1",
+      "seed": 42,
+      "threshold": 0.5,
+      "train_negatives_before": 155501,
+      "train_positives_before": 28078,
+      "train_negatives_after": 155501,
+      "train_positives_after": 28078,
+      "accuracy": 0.7184006972437085,
+      "precision": 0.32212783902644737,
+      "recall": 0.761789428693546,
+      "specificity": 0.7105669307541929,
+      "f1": 0.45279024472859686,
+      "roc_auc": 0.8103253367921834,
+      "pr_auc": 0.4132213469989996,
+      "brier_score": 0.18354388782557668,
+      "n": 45895,
+      "true_negatives": 27624,
+      "false_positives": 11252,
+      "false_negatives": 1672,
+      "true_positives": 5347
+    },
+    {
+      "strategy": "undersampling",
+      "model": "logistic_regression",
+      "dataset_variant": "unique_profile_v1",
+      "seed": 42,
+      "threshold": 0.5,
+      "train_negatives_before": 155501,
+      "train_positives_before": 28078,
+      "train_negatives_after": 28078,
+      "train_positives_after": 28078,
+      "accuracy": 0.7177906089988016,
+      "precision": 0.32164973245956835,
+      "recall": 0.7622168400056988,
+      "specificity": 0.7097695236135405,
+      "f1": 0.4523930323017081,
+      "roc_auc": 0.8103759615123713,
+      "pr_auc": 0.4131659704215501,
+      "brier_score": 0.18396096087114347,
+      "n": 45895,
+      "true_negatives": 27593,
+      "false_positives": 11283,
+      "false_negatives": 1669,
+      "true_positives": 5350
+    }
+  ]
+}

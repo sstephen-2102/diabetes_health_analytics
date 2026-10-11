@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-10-09T04:28:44+00:00",
+  "source_file": "cdc_diabetes.csv",
+  "dataset_version_sha256": "0f8ff13c40c0908fc6e9bf43dc05b3be706c6195481ac595b8e0adb256a79774",
+  "target_definition": "0 = neither prediabetes nor diabetes; 1 = prediabetes or diabetes (project-defined outcome)",
+  "primary_scenario": "unique_grouped",
+  "random_state": 42,
+  "test_size": 0.2,
+  "threshold": 0.5,
+  "seen_definition": "test row whose exact feature vector also appears in the training set",
+  "scenarios": {
+    "unique_grouped": {
+      "dataset_variant": "unique_profile_v1",
+      "split": "grouped",
+      "train_rows": 183579,
+      "test_rows": 45895,
+      "seen_test_rows": 0,
+      "seen_test_share": 0.0
+    },
+    "unique_random": {
+      "dataset_variant": "unique_profile_v1",
+      "split": "random",
+      "train_rows": 183579,
+      "test_rows": 45895,
+      "seen_test_rows": 502,
+      "seen_test_share": 0.010938010676544286
+    },
+    "full_grouped": {
+      "dataset_variant": "full_clean_v1",
+      "split": "grouped",
+      "train_rows": 202943,
+      "test_rows": 50737,
+      "seen_test_rows": 0,
+      "seen_test_share": 0.0
+    },
+    "full_random": {
+      "dataset_variant": "full_clean_v1",
+      "split": "random",
+      "train_rows": 202944,
+      "test_rows": 50736,
+      "seen_test_rows": 6836,
+      "seen_test_share": 0.13473667612740461
+    }
+  },
+  "files": [
+    "tables/duplicate_sensitivity.csv"
+  ]
+}

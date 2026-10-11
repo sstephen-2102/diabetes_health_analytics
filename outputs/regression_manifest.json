@@ -1,0 +1,83 @@
+{
+  "timestamp": "2026-10-09T01:14:36+00:00",
+  "source_file": "cdc_diabetes.csv",
+  "dataset_version_sha256": "0f8ff13c40c0908fc6e9bf43dc05b3be706c6195481ac595b8e0adb256a79774",
+  "dataset_variant": "full_clean_v1",
+  "n": 253680,
+  "target_definition": "0 = neither prediabetes nor diabetes; 1 = prediabetes or diabetes (project-defined outcome)",
+  "features": [
+    "HighBP",
+    "HighChol",
+    "CholCheck",
+    "BMI",
+    "Smoker",
+    "Stroke",
+    "HeartDiseaseorAttack",
+    "PhysActivity",
+    "Fruits",
+    "Veggies",
+    "HvyAlcoholConsump",
+    "AnyHealthcare",
+    "NoDocbcCost",
+    "GenHlth",
+    "MentHlth",
+    "PhysHlth",
+    "DiffWalk",
+    "Sex",
+    "Age",
+    "Education",
+    "Income"
+  ],
+  "feature_treatment": {
+    "BMI": "continuous; mean-centered",
+    "Age": "13-level ordinal code used as a numeric score (1 unit = one age band); mean-centered",
+    "GenHlth, Education, Income": "ordinal codes used as numeric scores (linear on the log-odds scale)",
+    "MentHlth, PhysHlth": "day counts 0-30 used as numeric",
+    "other features": "binary 0/1 indicators as recorded"
+  },
+  "centering_means": {
+    "BMI": 28.382363607694735,
+    "Age": 8.032119205298013
+  },
+  "interaction_term": {
+    "term": "BMI:Age",
+    "coefficient": 0.004965314580140705,
+    "odds_ratio": 1.0049776621826987,
+    "ci_lower": 1.0043444458745014,
+    "ci_upper": 1.0056112777193622,
+    "p_value": 8.737362498552936e-54
+  },
+  "model_comparison": {
+    "delta_aic": 251.38900589966215,
+    "delta_bic": 240.9451769904408,
+    "lr_statistic": 253.38900589966215,
+    "lr_df": 1,
+    "lr_p_value": 4.738330016816371e-57
+  },
+  "converged": {
+    "baseline": true,
+    "interaction": true
+  },
+  "confidence_level": 0.95,
+  "limitations": [
+    "Associations, not causal effects; survey responses are self-reported.",
+    "Survey weights and design are not applied; estimates describe this sample.",
+    "With n above 250,000 almost every p-value is tiny; judge size by odds ratios and CIs.",
+    "Ordinal codes are assumed to have a linear relationship with the log-odds.",
+    "full_clean_v1 keeps repeated complete rows, which can understate standard errors."
+  ],
+  "versions": {
+    "python": "3.14.6",
+    "pandas": "3.0.6",
+    "statsmodels": "0.15.0"
+  },
+  "files": [
+    "tables/full_clean_v1_regression_baseline_coefficients.csv",
+    "tables/full_clean_v1_regression_interaction_coefficients.csv",
+    "tables/full_clean_v1_regression_baseline_odds_ratios.csv",
+    "tables/full_clean_v1_regression_model_comparison.csv",
+    "tables/full_clean_v1_regression_bmi_odds_by_age.csv",
+    "figures/full_clean_v1_regression_odds_ratios.png",
+    "figures/full_clean_v1_regression_bmi_odds_by_age.png"
+  ]
+}

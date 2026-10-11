@@ -28,5 +28,24 @@ Outputs identify `full_clean_v1` and `unique_profile_v1`. Read
 `outputs/EDA_RESULTS.md`, `docs/DATA_DICTIONARY.md` and
 `docs/MEMBER1_HANDOFF.md` for results, signatures, decisions and test scope.
 
+## Member 3 modeling
+
+```text
+python -m src.analysis.export_regression --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_modeling --csv data/raw/cdc_diabetes.csv
+python -m src.analysis.export_duplicate_sensitivity --csv data/raw/cdc_diabetes.csv
+streamlit run streamlit_app.py
+```
+
+Read `docs/MODELING_REPORT.md` for the regression, classification, imbalance,
+threshold, calibration and interpretation results with report guidance, and
+`docs/MEMBER3_HANDOFF.md` for function contracts, design decisions and test scope.
+
+## Report
+
+`docs/report_template.md` is the section-by-section skeleton for the final report
+(owners, sources, required figures and checks). `docs/references.md` holds the
+APA 7 reference list and which section cites each entry.
+
 Target code 1 follows the project definition: **prediabetes or diabetes**.
 This work is descriptive, unadjusted sample analysis; no causal or diagnostic claims.

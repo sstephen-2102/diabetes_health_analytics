@@ -1,7 +1,7 @@
 pandas
 numpy
 scipy
-scikit-learn
+scikit-learn==1.9.1
 statsmodels
 streamlit
 plotly
