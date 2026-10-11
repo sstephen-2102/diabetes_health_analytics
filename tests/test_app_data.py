@@ -1,4 +1,5 @@
-"""Tests for the data pages of the Streamlit app (dashboard, Data Explorer, Exploratory Analysis).
+"""Tests for the survey-data pages of the Streamlit app: the Member 1 pages, plus shared checks for the
+Member 2 pages (page-specific Member 2 tests are in test_app_statistics.py).
 
 A small synthetic CSV with some repeated rows stands in for the survey data, so no download is needed.
 """
@@ -15,7 +16,7 @@ from src.common.exceptions import DataLoadError
 from src.data import loader
 from tests.test_export_modeling import create_survey_csv
 
-PAGES = ["dashboard", "data_explorer", "exploratory_analysis"]
+PAGES = ["dashboard", "data_explorer", "exploratory_analysis", "probability_explorer", "statistical_testing"]
 REPEATED_ROWS = 30
 
 

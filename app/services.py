@@ -72,13 +72,132 @@ def get_value_distribution(data: pd.DataFrame, feature: str) -> pd.DataFrame:
     require_frame(data, [feature, target])
     return pd.crosstab(data[feature], data[target], normalize="columns") * 100
 
+SMALL_DENOMINATOR = 100
+INFERENCE_WARNINGS = [
+    "Unweighted sample statistics: BRFSS survey weights are not applied, so results describe this dataset, "
+    "not the U.S. population.",
+    "Associations are unadjusted and observational; they do not establish causation.",
+]
+
+def _service_result(data: pd.DataFrame, results: dict, warnings: list[str], **metadata) -> dict:
+    from src.common.config import TARGET_DEFINITION
+    return {"status": "success", "results": results, "warnings": warnings + INFERENCE_WARNINGS,
+            "dataset_variant": data.attrs.get("dataset_variant", "unspecified"),
+            "target_definition": TARGET_DEFINITION, "metadata": {"n": len(data), **metadata}}
+
 def get_probability_analysis(data: pd.DataFrame, target_column: str, target_value, conditions: dict) -> dict:
-    """Coordinate conditional probability analysis."""
-    pass
+    """Marginal, joint and conditional probability of target_value; a Bayes check when there is one condition.
+
+    Empty conditions return only the marginal probability. Shares are observed, not model predictions.
+    """
+    from src.common.exceptions import InvalidParameterError
+    from src.data._checks import require_frame
+    from src.statistics.confidence_intervals import proportion_confidence_interval
+    from src.statistics.probability import (calculate_joint_probability, calculate_probability,
+                                            calculate_risk_profile_probability, verify_bayes_theorem)
+    if target_column in conditions:
+        raise InvalidParameterError("The target cannot also be a condition.")
+    require_frame(data, [target_column, *conditions])
+    successes = int((data[target_column] == target_value).sum())
+    results = {"marginal": {"numerator": successes, "denominator": len(data),
+                            "probability": calculate_probability(data, target_column, target_value),
+                            "confidence_interval": proportion_confidence_interval(successes, len(data))}}
+    warnings = []
+    if conditions:
+        conditional = calculate_risk_profile_probability(data, target_column, target_value, conditions)
+        results.update(conditional=conditional,
+                       joint_conditions=calculate_joint_probability(data, conditions),
+                       joint_with_target=calculate_joint_probability(data, {**conditions, target_column: target_value}))
+        if conditional["warning"]:
+            warnings.append(conditional["warning"])
+        elif conditional["denominator"] < SMALL_DENOMINATOR:
+            warnings.append(f"Only {conditional['denominator']} respondents meet the conditions, so the estimate is "
+                            "imprecise; read the confidence interval.")
+        if len(conditions) == 1:
+            (column, value), = conditions.items()
+            results["bayes"] = verify_bayes_theorem(data, target_column, target_value, column, value)
+    return _service_result(data, results, warnings, conditions=dict(conditions))
 
 def get_statistical_test_result(data: pd.DataFrame, test_type: str, feature: str, target_column: str, parameters: dict) -> dict:
-    """Dispatch supported statistical tests."""
-    pass
+    """Run 'chi_square' (with an odds ratio for 2 x 2 tables) or 'welch' (parameters: group_a, group_b,
+    confidence_level; defaults 1, 0, 0.95, so differences are category 1 minus category 0)."""
+    from src.common.exceptions import InvalidParameterError
+    from src.statistics.association import calculate_effect_size
+    from src.statistics.hypothesis_testing import run_chi_square_test, run_welch_t_test
+    parameters = parameters or {}
+    if test_type == "chi_square":
+        result = run_chi_square_test(data, feature, target_column)
+        table = result["contingency_table"]
+        result["row_percentages"] = table.div(table.sum(axis=1), axis=0) * 100
+        if table.shape == (2, 2):
+            result["odds_ratio"] = calculate_effect_size("odds_ratio", data, feature=feature,
+                                                         target_column=target_column)
+    elif test_type == "welch":
+        result = run_welch_t_test(data, feature, target_column, parameters.get("group_a", 1),
+                                  parameters.get("group_b", 0), parameters.get("confidence_level", 0.95))
+        result["assumption_warnings"] = [_name_groups(w, feature, result["group_a"], result["group_b"])
+                                         for w in result["assumption_warnings"]]
+    else:
+        raise InvalidParameterError("test_type must be 'chi_square' or 'welch'.")
+    return _service_result(data, result, list(result["assumption_warnings"]), test_type=test_type)
+
+def _name_groups(warning: str, feature: str, group_a, group_b) -> str:
+    return warning.replace("group_a", f"{feature} in category {group_a}").replace(
+        "group_b", f"{feature} in category {group_b}")
+
+def get_confidence_intervals(data: pd.DataFrame, feature: str, target_column: str,
+                             confidence_level: float = 0.95) -> dict:
+    """Categorical feature: Wilson interval for the target share in each category and overall.
+    Numeric feature: t interval for the mean in each target group and a Welch interval for the difference
+    (category 1 minus category 0)."""
+    from src.common.config import VARIABLE_METADATA
+    from src.data._checks import require_frame
+    from src.statistics.confidence_intervals import (difference_in_means_ci, mean_confidence_interval,
+                                                     proportion_confidence_interval)
+    require_frame(data, [feature, target_column])
+    labels = VARIABLE_METADATA.get(feature, {}).get("category_labels")
+    rows = []
+    if labels:
+        groups = [("All respondents", data)] + [(f"{code}: {labels.get(code, code)}", group)
+                                                for code, group in data.groupby(feature)]
+        for label, group in groups:
+            interval = proportion_confidence_interval(int((group[target_column] == 1).sum()), len(group),
+                                                      confidence_level)
+            rows.append({"group": label, "n": interval["total"], "estimate": interval["estimate"] * 100,
+                         "lower": interval["lower"] * 100, "upper": interval["upper"] * 100})
+        results = {"kind": "proportion", "method": "Wilson score interval", "difference": None}
+    else:
+        target_labels = VARIABLE_METADATA[target_column]["category_labels"]
+        values = {code: data.loc[data[target_column] == code, feature] for code in (1, 0)}
+        for code, series in values.items():
+            interval = mean_confidence_interval(series, confidence_level)
+            rows.append({"group": f"{code}: {target_labels[code]}", "n": interval["n"], "estimate": interval["mean"],
+                         "lower": interval["lower"], "upper": interval["upper"]})
+        results = {"kind": "mean", "method": "t interval for each mean; Welch interval for the difference",
+                   "difference": difference_in_means_ci(values[1], values[0], confidence_level)}
+    results["table"] = pd.DataFrame(rows)
+    results["confidence_level"] = confidence_level
+    return _service_result(data, results, [], feature=feature)
+
+def get_hypothesis_summary(data: pd.DataFrame, target_column: str) -> dict:
+    """H1-H7 results with a note on multiplicity: no adjustment is applied, by team decision."""
+    from src.statistics.hypothesis_suite import run_hypothesis_suite
+    table = run_hypothesis_suite(data, target_column)
+    threshold = 0.05 / len(table)
+    above = table.loc[table["p_value"] >= threshold, "hypothesis"].tolist()
+    note = (f"No multiple-comparison adjustment is applied (team decision). Every p-value is below "
+            f"0.05 / {len(table)} = {threshold:.4f}, the Bonferroni threshold, so even the strictest common "
+            "adjustment would not change a conclusion." if not above else
+            f"No multiple-comparison adjustment is applied (team decision). {', '.join(above)} would not pass "
+            f"the Bonferroni threshold 0.05 / {len(table)} = {threshold:.4f}; interpret them cautiously.")
+    warnings = [note] + [f"{row.hypothesis}: {_name_groups(w, row.feature, 1, 0)}"
+                         for row in table.itertuples() if row.warnings for w in row.warnings.split(" | ")]
+    return _service_result(data, {"hypotheses": table}, warnings)
+
+def get_bayes_summary(data: pd.DataFrame, target_column: str) -> dict:
+    """Bayes' theorem checked against direct counts for the default binary features (feature value 1)."""
+    from src.statistics.bayes_suite import run_bayes_suite
+    return _service_result(data, {"bayes": run_bayes_suite(data, target_column)}, [])
 
 def ensure_model_files(models_directory: str, csv_path: str) -> bool:
     """Retrain the saved pipelines if metadata.json exists but its .pkl files do not (they are not in Git).

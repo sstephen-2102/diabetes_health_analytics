@@ -160,6 +160,32 @@ def binary_comparison_chart(table, labels: dict) -> go.Figure:
                    barmode="group", height=max(420, 40 * len(ordered)), legend=dict(orientation="h", y=-0.1))
 
 
+def interval_chart(table, title: str, x_title: str, reference: float | None = None,
+                   from_zero: bool = False) -> go.Figure:
+    """Point estimates with confidence intervals; table columns: group, estimate, lower, upper, n."""
+    fig = go.Figure(go.Scatter(
+        x=table["estimate"], y=table["group"].astype(str), mode="markers", marker=dict(size=9, color=TARGET_COLORS[1]),
+        error_x=dict(type="data", symmetric=False, array=table["upper"] - table["estimate"],
+                     arrayminus=table["estimate"] - table["lower"]),
+        customdata=table[["lower", "upper", "n"]],
+        hovertemplate="%{y}: %{x:.2f} [%{customdata[0]:.2f}, %{customdata[1]:.2f}], n = %{customdata[2]:,}"
+                      "<extra></extra>"))
+    if reference is not None:
+        fig.add_vline(reference, line_dash="dash", line_color="gray")
+    return _layout(fig, title, x_title, "", yaxis_autorange="reversed", showlegend=False,
+                   height=max(220, 36 * len(table) + 120), xaxis_rangemode="tozero" if from_zero else "normal")
+
+
+def cramers_v_chart(table, labels: dict) -> go.Figure:
+    """Cramér's V per chi-square hypothesis; table columns: hypothesis, feature, effect_value."""
+    names = [f"{h}: {labels.get(f, f)}" for h, f in zip(table["hypothesis"], table["feature"])]
+    fig = go.Figure(go.Bar(x=table["effect_value"], y=names, orientation="h", marker_color=TARGET_COLORS[1],
+                           text=[f"{v:.3f}" for v in table["effect_value"]], textposition="outside"))
+    return _layout(fig, "Effect size of each chi-square association (Cramér's V)", "Cramér's V", "",
+                   yaxis_autorange="reversed", showlegend=False, height=max(300, 44 * len(table)),
+                   xaxis_range=[0, max(table["effect_value"].max() * 1.25, 0.1)])
+
+
 def correlation_heatmap(matrix, labels: dict) -> go.Figure:
     names = [labels.get(c, c) for c in matrix.columns]
     fig = go.Figure(go.Heatmap(z=matrix.values, x=names, y=names, zmin=-1, zmax=1, colorscale="RdBu_r",

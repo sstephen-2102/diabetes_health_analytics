@@ -113,8 +113,10 @@ P(category 1 given feature) and the Bayes right-hand side agree in every case.
 - With n = 253,680, p-values underflow to 0.0; report them as p < 0.001.
 - BMI extremes remain unverified (carried over from Member 1). Skewness warnings are raised for H3.
 - The positive class is category 1 (prediabetes or diabetes); do not describe it as "diabetic".
-- The Streamlit pages and the service functions (`get_probability_analysis`,
-  `get_statistical_test_result`) remain skeletons.
+- The Probability Explorer and Statistical Testing Lab pages and their service functions
+  (`get_probability_analysis`, `get_statistical_test_result`, `get_confidence_intervals`,
+  `get_hypothesis_summary`, `get_bayes_summary` in `app/services.py`) were added afterwards; they call the
+  functions above and are tested in `tests/test_app_statistics.py`.
 - Modeling, calibration and prediction are not part of this contribution.
 
 ## Review and collaboration
