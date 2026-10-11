@@ -46,4 +46,4 @@ def test_pipeline_statistics_step_writes_tables(tmp_path):
                                              steps=["statistics"])
 
     assert (tmp_path / "out" / "tables" / "member2_hypothesis_results.csv").exists()
-    assert set(results["statistics"]) == {"hypotheses", "bayes"}
+    assert set(results["statistics"]) == {"hypotheses", "bayes", "probabilities", "intervals"}

@@ -37,6 +37,28 @@ class ExportMember2Tests(unittest.TestCase):
         self.assertEqual(set(hypotheses["dataset_variant"]), {"full_clean_v1", "unique_profile_v1"})
         self.assertTrue(bayes["matches"].all())
 
+    def test_writes_probability_and_interval_tables(self):
+        with tempfile.TemporaryDirectory() as temp:
+            csv_path = Path(temp) / "sample.csv"
+            synthetic_csv(csv_path)
+            paths = export_member2(str(csv_path), str(Path(temp) / "out"))
+            probabilities = pd.read_csv(paths["probabilities"])
+            intervals = pd.read_csv(paths["intervals"])
+            data = pd.read_csv(csv_path)
+        full = probabilities[probabilities["dataset_variant"] == "full_clean_v1"].set_index("conditions")
+        high_bp = data[data["HighBP"] == 1]
+        self.assertAlmostEqual(full.loc["none (all respondents)", "p_category1_given_conditions"],
+                               data["Diabetes_binary"].mean(), places=6)
+        self.assertEqual(full.loc["HighBP=1", "denominator"], len(high_bp))
+        self.assertAlmostEqual(full.loc["HighBP=1", "p_category1_given_conditions"],
+                               full.loc["HighBP=1", "p_conditions_and_category1"] / full.loc["HighBP=1", "p_conditions"],
+                               places=5)
+        self.assertTrue((intervals["ci_lower"] <= intervals["estimate"]).all())
+        self.assertTrue((intervals["estimate"] <= intervals["ci_upper"]).all())
+        bmi = intervals[(intervals["dataset_variant"] == "full_clean_v1") & (intervals["feature"] == "BMI")]
+        self.assertEqual(list(bmi["estimate_type"]), ["mean", "mean", "mean_difference"])
+        self.assertAlmostEqual(bmi["estimate"].iloc[2], bmi["estimate"].iloc[0] - bmi["estimate"].iloc[1], places=5)
+
     def test_missing_csv_raises(self):
         with self.assertRaises(Exception):
             export_member2("does_not_exist.csv")

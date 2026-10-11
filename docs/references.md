@@ -7,8 +7,8 @@ Paste the list into the report in alphabetical order (already sorted), with a
 hanging indent. In Markdown the italics mark the parts APA italicizes: book and
 data-set titles, journal names and volume numbers.
 
-Entries marked *planned* in the usage table support Member 2 methods that are
-not implemented yet. Keep only the ones the final statistics code uses.
+Entries marked *not used* in the usage table support methods the project did not
+implement; leave them out of the final report.
 
 ## Reference list
 
@@ -179,12 +179,13 @@ Report section numbers follow spec section 26.
 | CDC (2016a, 2016b); *CDC diabetes health indicators* (2017); Teboul (2021) | Data source, variable definitions, Kaggle/UCI derivation of BRFSS 2015 | 2, 3, 17 | used |
 | Xie et al. (2019) | Prior ML work on BRFSS diabetes indicators (origin of the cleaned dataset) | 1 | used |
 | Spearman (1904) | Spearman correlation matrix | 5 | used |
-| Wilson (1927); Agresti & Coull (1998) | Proportion confidence intervals | 7 | planned: keep the one implemented |
-| Welch (1947) | Welch t-test and mean-difference interval | 7, 8 | planned |
-| Pearson (1900) | Chi-square test of independence | 8 | planned |
-| Tukey (1949) | Post-hoc comparisons after ANOVA | 8 | planned |
-| Cohen (1988); Cramér (1946) | Effect sizes (Cohen's d, Cramér's V) | 9 | planned |
-| Benjamini & Hochberg (1995) | False-discovery-rate adjustment | 9 | planned |
+| Wilson (1927) | Proportion confidence intervals (Wilson score) | 6, 7 | used |
+| Agresti & Coull (1998) | Alternative proportion interval | — | not used (Wilson implemented) |
+| Welch (1947) | Welch t-test and mean-difference interval | 7, 8 | used |
+| Pearson (1900) | Chi-square test of independence | 8 | used |
+| Tukey (1949) | Post-hoc comparisons after ANOVA | — | not used (scoped out by team decision) |
+| Cohen (1988); Cramér (1946) | Effect sizes (Cohen's d, Cramér's V) | 9 | used |
+| Benjamini & Hochberg (1995) | False-discovery-rate adjustment | — | not used (no adjustment, team decision) |
 | Hosmer et al. (2013) | Logistic regression and odds-ratio interpretation | 10, 11 | used |
 | McFadden (1974) | Pseudo-R² | 10, 11 | used |
 | Wilks (1938); Akaike (1974); Schwarz (1978) | Likelihood-ratio test, AIC, BIC | 11 | used |

@@ -85,7 +85,8 @@ Tests use small synthetic CSVs, so they need neither the real dataset nor a netw
 | `docs/MEMBER3_HANDOFF.md` | Regression and modeling: contracts, design decisions, test scope |
 | `outputs/EDA_RESULTS.md` | EDA results summary |
 | `docs/MODELING_REPORT.md` | Regression, classification, imbalance, threshold, calibration and interpretation results |
-| `docs/report_template.md` | Section-by-section skeleton for the final report |
+| `docs/FINAL_REPORT.md` | Final report scaffold: every number, table, figure and caption, with a traceability table |
+| `docs/report_template.md` | Original section-by-section guidance for the final report |
 | `docs/references.md` | APA 7 references and which report section cites each |
 
 ## Scope and limitations

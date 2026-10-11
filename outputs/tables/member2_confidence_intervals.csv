@@ -1,0 +1,47 @@
+estimate_type,dataset_variant,feature,group,n,estimate,ci_lower,ci_upper,method,confidence_level
+category_1_share,full_clean_v1,all,all respondents,253680,0.139333,0.137991,0.140686,wilson,0.95
+category_1_share,full_clean_v1,HighBP,0,144851,0.060352,0.059137,0.06159,wilson,0.95
+category_1_share,full_clean_v1,HighBP,1,108829,0.244457,0.241913,0.247019,wilson,0.95
+category_1_share,full_clean_v1,HighChol,0,146089,0.079814,0.078436,0.081215,wilson,0.95
+category_1_share,full_clean_v1,HighChol,1,107591,0.220149,0.217683,0.222634,wilson,0.95
+category_1_share,full_clean_v1,PhysActivity,0,61760,0.211448,0.208245,0.214686,wilson,0.95
+category_1_share,full_clean_v1,PhysActivity,1,191920,0.116127,0.114701,0.117568,wilson,0.95
+category_1_share,full_clean_v1,Smoker,0,141257,0.120553,0.118866,0.122262,wilson,0.95
+category_1_share,full_clean_v1,Smoker,1,112423,0.162929,0.160782,0.1651,wilson,0.95
+category_1_share,full_clean_v1,GenHlth,1,45299,0.025166,0.023764,0.026649,wilson,0.95
+category_1_share,full_clean_v1,GenHlth,2,89084,0.071629,0.069954,0.073341,wilson,0.95
+category_1_share,full_clean_v1,GenHlth,3,75646,0.177894,0.175186,0.180636,wilson,0.95
+category_1_share,full_clean_v1,GenHlth,4,31570,0.310105,0.305026,0.31523,wilson,0.95
+category_1_share,full_clean_v1,GenHlth,5,12081,0.378942,0.370331,0.38763,wilson,0.95
+mean,full_clean_v1,BMI,category 1,35346,31.944011,31.867244,32.020777,"t-interval, df = n - 1",0.95
+mean,full_clean_v1,BMI,category 0,218334,27.80577,27.77938,27.83216,"t-interval, df = n - 1",0.95
+mean_difference,full_clean_v1,BMI,category 1 minus category 0,253680,4.138241,4.057065,4.219416,"Welch (Satterthwaite df), a minus b",0.95
+mean,full_clean_v1,MentHlth,category 1,35346,4.461806,4.368523,4.55509,"t-interval, df = n - 1",0.95
+mean,full_clean_v1,MentHlth,category 0,218334,2.978034,2.948202,3.007865,"t-interval, df = n - 1",0.95
+mean_difference,full_clean_v1,MentHlth,category 1 minus category 0,253680,1.483772,1.385835,1.58171,"Welch (Satterthwaite df), a minus b",0.95
+mean,full_clean_v1,PhysHlth,category 1,35346,7.954479,7.836656,8.072301,"t-interval, df = n - 1",0.95
+mean,full_clean_v1,PhysHlth,category 0,218334,3.641082,3.607254,3.67491,"t-interval, df = n - 1",0.95
+mean_difference,full_clean_v1,PhysHlth,category 1 minus category 0,253680,4.313397,4.190814,4.435979,"Welch (Satterthwaite df), a minus b",0.95
+category_1_share,unique_profile_v1,all,all respondents,229474,0.152945,0.151479,0.154424,wilson,0.95
+category_1_share,unique_profile_v1,HighBP,0,125214,0.069417,0.068023,0.070838,wilson,0.95
+category_1_share,unique_profile_v1,HighBP,1,104260,0.253261,0.25063,0.25591,wilson,0.95
+category_1_share,unique_profile_v1,HighChol,0,128129,0.090542,0.088983,0.092125,wilson,0.95
+category_1_share,unique_profile_v1,HighChol,1,101345,0.231842,0.229254,0.23445,wilson,0.95
+category_1_share,unique_profile_v1,PhysActivity,0,61260,0.212831,0.209607,0.21609,wilson,0.95
+category_1_share,unique_profile_v1,PhysActivity,1,168214,0.131137,0.129532,0.132758,wilson,0.95
+category_1_share,unique_profile_v1,Smoker,0,122585,0.137651,0.135734,0.139591,wilson,0.95
+category_1_share,unique_profile_v1,Smoker,1,106889,0.170485,0.168243,0.172752,wilson,0.95
+category_1_share,unique_profile_v1,GenHlth,1,34854,0.032564,0.030752,0.03448,wilson,0.95
+category_1_share,unique_profile_v1,GenHlth,2,77365,0.081174,0.07927,0.083119,wilson,0.95
+category_1_share,unique_profile_v1,GenHlth,3,73632,0.180954,0.17819,0.183751,wilson,0.95
+category_1_share,unique_profile_v1,GenHlth,4,31545,0.310065,0.304984,0.315192,wilson,0.95
+category_1_share,unique_profile_v1,GenHlth,5,12078,0.378953,0.370341,0.387642,wilson,0.95
+mean,unique_profile_v1,BMI,category 1,35097,31.964242,31.887026,32.041458,"t-interval, df = n - 1",0.95
+mean,unique_profile_v1,BMI,category 0,194377,28.095855,28.066944,28.124766,"t-interval, df = n - 1",0.95
+mean_difference,unique_profile_v1,BMI,category 1 minus category 0,229474,3.868387,3.785937,3.950837,"Welch (Satterthwaite df), a minus b",0.95
+mean,unique_profile_v1,MentHlth,category 1,35097,4.493404,4.399541,4.587267,"t-interval, df = n - 1",0.95
+mean,unique_profile_v1,MentHlth,category 0,194377,3.332277,3.299135,3.365419,"t-interval, df = n - 1",0.95
+mean_difference,unique_profile_v1,MentHlth,category 1 minus category 0,229474,1.161127,1.061585,1.260669,"Welch (Satterthwaite df), a minus b",0.95
+mean,unique_profile_v1,PhysHlth,category 1,35097,8.008491,7.89005,8.126931,"t-interval, df = n - 1",0.95
+mean,unique_profile_v1,PhysHlth,category 0,194377,4.080442,4.042927,4.117956,"t-interval, df = n - 1",0.95
+mean_difference,unique_profile_v1,PhysHlth,category 1 minus category 0,229474,3.928049,3.80381,4.052288,"Welch (Satterthwaite df), a minus b",0.95

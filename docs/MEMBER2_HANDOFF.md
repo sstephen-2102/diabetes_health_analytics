@@ -70,7 +70,10 @@ python -m src.analysis.export_member2 --csv data/raw/cdc_diabetes.csv
 
 The CSV is not in the repository. Run `notebooks/CDC_DIABETES_EDA.ipynb` (its first cell downloads
 and checks it) or place the verified file at `data/raw/cdc_diabetes.csv`.
-Outputs: `outputs/tables/member2_hypothesis_results.csv` and `outputs/tables/member2_bayes_results.csv`.
+Outputs: `outputs/tables/member2_hypothesis_results.csv` and `outputs/tables/member2_bayes_results.csv`,
+plus `member2_probability_results.csv` (marginal, joint and conditional probabilities for selected
+conditions) and `member2_confidence_intervals.csv` (Wilson, t and Welch intervals), added later for the
+final report.
 
 ## Results summary (full sample; unique-profile sample in the exported tables)
 
