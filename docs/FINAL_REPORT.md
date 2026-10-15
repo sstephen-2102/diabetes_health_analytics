@@ -4,7 +4,7 @@
 - **Team:** Arunava Banerjee (data and EDA); Binish Hamdani (probability and inference);
   Sanjay Varghese Stephen (regression and machine learning)
 - **Date:** 19 October 2026
-- **Repository:** https://github.com/sstephen-2102/diabetes_health_analytics, commit [FINAL COMMIT HASH]
+- **Repository:** https://github.com/sstephen-2102/diabetes_health_analytics, commit `6316d5e`
 - **Live application:** https://diabeteshealthanalytics-arunava-binish-sanjay.streamlit.app
 
 ---
@@ -855,7 +855,7 @@ Python 3.14, scikit-learn 1.9.1 (Pedregosa et al., 2011), statsmodels 0.15.0 (Se
 pandas 3.0 (McKinney, 2010), NumPy 2.5 (Harris et al., 2020), SciPy 1.18 (Virtanen et al., 2020),
 Matplotlib 3.11 (Hunter, 2007), Streamlit 1.64 (Snowflake Inc., n.d.) and Plotly 7.1 (Plotly Technologies
 Inc., 2015). The code is covered by 548 automated tests that run on synthetic data. The commit described
-by this report is [FINAL COMMIT HASH].
+by this report is `6316d5e`.
 
 ---
 

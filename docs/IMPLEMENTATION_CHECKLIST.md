@@ -23,5 +23,5 @@
 - [x] All ten spec limitations present.
 - [ ] Prose reviewed and rewritten by the team.
 - [ ] Every figure and table caption still names its dataset variant after editing.
-- [ ] Final commit hash added (title page and Appendix A).
+- [x] Final commit hash added (title page and Appendix A).
 - [x] App opens without signing in (checked in a private window).
